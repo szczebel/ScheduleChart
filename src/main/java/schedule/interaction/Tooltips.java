@@ -39,4 +39,9 @@ public class Tooltips<R extends Resource, TaskType extends Task> extends Interac
         currentPopup = null;
         currentlyShowing = null;
     }
+
+    @SuppressWarnings("unused")
+    public static <R extends Resource, TaskType extends Task> Tooltips<R, TaskType> with(TaskRenderer<TaskType> renderer) {
+        return new Tooltips<>(renderer);
+    }
 }
