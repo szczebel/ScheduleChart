@@ -1,8 +1,8 @@
 package schedule.chart;
 
-import schedule.model.Event;
 import schedule.model.Resource;
 import schedule.model.ScheduleModel;
+import schedule.model.Task;
 
 import javax.swing.*;
 import java.awt.*;
@@ -10,9 +10,9 @@ import java.time.Duration;
 import java.time.ZonedDateTime;
 
 @SuppressWarnings("unused")
-public class ScheduleChart<R extends Resource, E extends Event> implements ScheduleModel.Listener {
+public class ScheduleChart<R extends Resource, TaskType extends Task> implements ScheduleModel.Listener {
     private static final int MAX_PIXELS_PER_HOUR = 60;
-    final ScheduleModel<R, E> model;
+    final ScheduleModel<R, TaskType> model;
     final Configuration configuration = new Configuration();
 
     private JScrollPane scrollPane;
@@ -20,7 +20,7 @@ public class ScheduleChart<R extends Resource, E extends Event> implements Sched
     private ResourcePanel resourcePanel;
     private TimeLinePanel timeLinePanel;
 
-    public ScheduleChart(ScheduleModel<R, E> scheduleModel) {
+    public ScheduleChart(ScheduleModel<R, TaskType> scheduleModel) {
         model = scheduleModel;
         buildComponents();
         model.setListener(this);
@@ -92,8 +92,8 @@ public class ScheduleChart<R extends Resource, E extends Event> implements Sched
         recalculateSizes();
     }
 
-    public void setEventRenderer(EventRenderer<E> eventRenderer) {
-        chartPanel.eventRenderer = eventRenderer;
+    public void setEventRenderer(TaskRenderer<TaskType> taskRenderer) {
+        chartPanel.taskRenderer = taskRenderer;
         getComponent().repaint();
     }
 
@@ -108,7 +108,7 @@ public class ScheduleChart<R extends Resource, E extends Event> implements Sched
     }
 
     public static class Configuration {
-        int rowHeight = 12;
+        int rowHeight = 14;
         int pixelsPerHour = 2;
         int rowMargin = 2;
 

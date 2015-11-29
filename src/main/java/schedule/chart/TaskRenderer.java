@@ -1,14 +1,16 @@
 package schedule.chart;
 
+import schedule.model.Task;
+
 import javax.swing.*;
 import java.awt.*;
 import java.time.format.DateTimeFormatter;
 
-public interface EventRenderer<E extends schedule.model.Event> {
+public interface TaskRenderer<TaskType extends Task> {
 
-    Component getRenderingComponent(E event);
+    Component getRenderingComponent(TaskType task);
 
-    class Default<E extends schedule.model.Event> extends JPanel implements EventRenderer<E> {
+    class Default<TaskType extends Task> extends JPanel implements TaskRenderer<TaskType> {
         protected DateTimeFormatter format = DateTimeFormatter.ofPattern("HH:mm");
         protected JLabel left = createLabel(JLabel.LEFT);
         protected JLabel center = createLabel(JLabel.CENTER);
@@ -24,14 +26,14 @@ public interface EventRenderer<E extends schedule.model.Event> {
         }
 
         @Override
-        public Component getRenderingComponent(E event) {
-            left.setText(event.getStart().format(format));
-            center.setText(getTextFromEvent(event));
-            right.setText(event.getEnd().format(format));
+        public Component getRenderingComponent(TaskType task) {
+            left.setText(task.getStart().format(format));
+            center.setText(getTextFromTask(task));
+            right.setText(task.getEnd().format(format));
             return this;
         }
 
-        protected String getTextFromEvent(E event) {
+        protected String getTextFromTask(TaskType event) {
             return event.toString();
         }
 

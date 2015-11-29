@@ -1,15 +1,15 @@
 package schedule.chart;
 
-import schedule.model.Event;
 import schedule.model.Resource;
+import schedule.model.Task;
 
 import java.awt.*;
 import java.awt.event.MouseWheelEvent;
 import java.util.List;
 
-class ChartPanel<R extends Resource, E extends Event> extends PanelWithRows {
+class ChartPanel<R extends Resource, E extends Task> extends PanelWithRows {
     final ScheduleChart<R, E> scheduleChart;
-    EventRenderer<E> eventRenderer = new EventRenderer.Default<>();
+    TaskRenderer<E> taskRenderer = new TaskRenderer.Default<>();
 
 
     public ChartPanel(ScheduleChart<R, E> scheduleChart, RowHighlightTracker rowHighlightTracker) {
@@ -47,7 +47,7 @@ class ChartPanel<R extends Resource, E extends Event> extends PanelWithRows {
     private void renderEvent(Graphics g, E event, int y) {
         int x = scheduleChart.timeToX(event.getStart());
         int width = scheduleChart.timeToX(event.getEnd()) - x;
-        Component renderingComponent = eventRenderer.getRenderingComponent(event);
+        Component renderingComponent = taskRenderer.getRenderingComponent(event);
         renderingComponent.setSize(new Dimension(width, configuration.rowHeight));
         renderingComponent.doLayout();
         renderingComponent.paint(g.create(x, y, width, configuration.rowHeight));

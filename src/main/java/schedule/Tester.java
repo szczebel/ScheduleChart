@@ -1,10 +1,10 @@
 package schedule;
 
-import schedule.chart.EventRenderer;
 import schedule.chart.ScheduleChart;
-import schedule.model.BasicEvent;
+import schedule.chart.TaskRenderer;
 import schedule.model.BasicResource;
 import schedule.model.BasicScheduleModel;
+import schedule.model.BasicTask;
 
 import javax.swing.*;
 import javax.swing.border.BevelBorder;
@@ -17,11 +17,11 @@ public class Tester {
         final JFrame frame = new JFrame("Schedule");
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
-        BasicScheduleModel<BasicResource, BasicEvent> scheduleModel = new BasicScheduleModel<>();
+        BasicScheduleModel<BasicResource, BasicTask> scheduleModel = new BasicScheduleModel<>();
         ZonedDateTime start = ZonedDateTime.now().minusDays(60);
         ZonedDateTime end = ZonedDateTime.now();
         new DataGenerator().generate(scheduleModel, start, end);
-        ScheduleChart<BasicResource, BasicEvent> chart = new ScheduleChart<>(scheduleModel);
+        ScheduleChart<BasicResource, BasicTask> chart = new ScheduleChart<>(scheduleModel);
         chart.setRowHeight(14);
         chart.setEventRenderer(new RaisedColored(Color.green));
         chart.getComponent().setPreferredSize(new Dimension(1000, 500));
@@ -31,7 +31,7 @@ public class Tester {
         frame.setVisible(true);
     }
 
-    private static class RaisedColored extends EventRenderer.Default<BasicEvent> {
+    private static class RaisedColored extends TaskRenderer.Default<BasicTask> {
 
         public RaisedColored(Color green) {
             setBackground(green);

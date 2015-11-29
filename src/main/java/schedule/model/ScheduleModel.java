@@ -4,7 +4,7 @@ import java.time.ZonedDateTime;
 import java.util.Collection;
 import java.util.List;
 
-public interface ScheduleModel<R extends Resource, E extends Event> {
+public interface ScheduleModel<R extends Resource, E extends Task> {
     List<R> getResources();
 
     Collection<E> getEventsAssignedTo(R resource);

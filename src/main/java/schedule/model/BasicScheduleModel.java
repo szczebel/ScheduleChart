@@ -9,7 +9,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-public class BasicScheduleModel<R extends Resource, E extends Event> implements ScheduleModel<R, E> {
+public class BasicScheduleModel<R extends Resource, E extends Task> implements ScheduleModel<R, E> {
     final Multimap<R, E> assignments = HashMultimap.create();
     final List<R> resources = new ArrayList<>();
     Listener listener = () -> {
