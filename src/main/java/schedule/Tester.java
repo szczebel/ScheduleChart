@@ -28,6 +28,12 @@ public class Tester {
         frame.pack();
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
+
+        end = end.minusNanos(end.getNano());
+        end = end.minusSeconds(end.getSecond());
+        end = end.minusMinutes(end.getMinute());
+        end = end.minusHours(end.getHour());
+        System.out.println(end);
     }
 
     private static class Green extends EventRenderer.Default<BasicEvent> {
