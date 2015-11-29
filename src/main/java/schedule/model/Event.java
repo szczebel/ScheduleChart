@@ -1,8 +1,8 @@
-package schedule;
+package schedule.model;
 
 import java.time.ZonedDateTime;
 
-interface Event {
+public interface Event {
 
     ZonedDateTime getStart();
 

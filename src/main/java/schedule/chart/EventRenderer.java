@@ -1,14 +1,14 @@
-package schedule;
+package schedule.chart;
 
 import javax.swing.*;
 import java.awt.*;
 import java.time.format.DateTimeFormatter;
 
-interface EventRenderer<E extends Event> {
+public interface EventRenderer<E extends schedule.model.Event> {
 
     Component getRenderingComponent(E event);
 
-    class Default<E extends Event> extends JLabel implements EventRenderer<E> {
+    class Default<E extends schedule.model.Event> extends JLabel implements EventRenderer<E> {
         protected static final DateTimeFormatter dayHourMins = DateTimeFormatter.ofPattern("dd.MMM HH:mm");
 
         public Default() {

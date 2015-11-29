@@ -1,9 +1,11 @@
-package schedule;
+package schedule.chart;
+
+import schedule.model.Resource;
 
 import javax.swing.*;
 import java.awt.*;
 
-interface ResourceRenderer<R extends Resource> {
+public interface ResourceRenderer<R extends Resource> {
 
     Component getRenderingComponent(R resource);
 

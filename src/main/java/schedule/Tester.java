@@ -1,6 +1,14 @@
 package schedule;
 
+import schedule.chart.EventRenderer;
+import schedule.chart.ScheduleChart;
+import schedule.model.BasicEvent;
+import schedule.model.BasicResource;
+import schedule.model.BasicScheduleModel;
+
 import javax.swing.*;
+import javax.swing.border.BevelBorder;
+import java.awt.*;
 import java.time.ZonedDateTime;
 
 public class Tester {
@@ -13,11 +21,21 @@ public class Tester {
         ZonedDateTime start = ZonedDateTime.now().minusDays(60);
         ZonedDateTime end = ZonedDateTime.now();
         new DataGenerator().generate(scheduleModel, start, end);
-        frame.add(new ScheduleChart<>(scheduleModel, start, end).getComponent());
-
-
+        ScheduleChart<BasicResource, BasicEvent> chart = new ScheduleChart<>(scheduleModel, start, end);
+        chart.setRowHeight(14);
+        chart.setEventRenderer(new Green());
+        frame.add(chart.getComponent());
         frame.pack();
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
+    }
+
+    private static class Green extends EventRenderer.Default<BasicEvent> {
+
+        public Green() {
+            setBackground(Color.green);
+            setOpaque(true);
+            setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
+        }
     }
 }

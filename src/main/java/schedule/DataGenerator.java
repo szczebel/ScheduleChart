@@ -1,5 +1,9 @@
 package schedule;
 
+import schedule.model.BasicEvent;
+import schedule.model.BasicResource;
+import schedule.model.BasicScheduleModel;
+
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;

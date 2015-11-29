@@ -1,5 +1,0 @@
-package schedule;
-
-interface Resource {
-
-}

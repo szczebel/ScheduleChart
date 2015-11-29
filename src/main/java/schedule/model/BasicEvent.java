@@ -1,12 +1,12 @@
-package schedule;
+package schedule.model;
 
 import java.time.ZonedDateTime;
 
-class BasicEvent implements Event {
+public class BasicEvent implements Event {
     final ZonedDateTime start, end;
     final String name;
 
-    BasicEvent(ZonedDateTime start, ZonedDateTime end, String name) {
+    public BasicEvent(ZonedDateTime start, ZonedDateTime end, String name) {
         this.start = start;
         this.end = end;
         this.name = name;

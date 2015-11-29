@@ -1,9 +1,9 @@
-package schedule;
+package schedule.model;
 
 import java.util.Collection;
 import java.util.List;
 
-interface ScheduleModel<R extends Resource, E extends Event> {
+public interface ScheduleModel<R extends Resource, E extends Event> {
     List<R> getResources();
 
     Collection<E> getEventsAssignedTo(R resource);

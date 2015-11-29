@@ -1,9 +1,9 @@
-package schedule;
+package schedule.model;
 
-class BasicResource implements Resource {
+public class BasicResource implements Resource {
     final String name;
 
-    BasicResource(String name) {
+    public BasicResource(String name) {
         this.name = name;
     }
 
