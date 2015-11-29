@@ -1,12 +1,15 @@
 package schedule.chart;
 
 import schedule.interaction.Interactions;
+import schedule.interaction.Tooltips;
 import schedule.model.Resource;
 import schedule.model.ScheduleModel;
 import schedule.model.Task;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import java.time.Duration;
 import java.time.ZonedDateTime;
@@ -22,7 +25,7 @@ public class ScheduleChart<R extends Resource, TaskType extends Task> implements
     private ResourcePanel<R> resourcePanel;
     private TimeLinePanel timeLinePanel;
 
-    Interactions<R, TaskType> interactions = new Interactions.Default<>();
+    Interactions<R, TaskType> interactions = new Tooltips<>(new TaskRenderer.Default<>());
 
     public ScheduleChart(ScheduleModel<R, TaskType> scheduleModel) {
         model = scheduleModel;
@@ -30,13 +33,13 @@ public class ScheduleChart<R extends Resource, TaskType extends Task> implements
         model.setListener(this);
     }
 
-
     private void buildComponents() {
         RowHighlightTracker rowHighlightTracker = new RowHighlightTracker(this);
         chartPanel = new ChartPanel<>(rowHighlightTracker, model, configuration);
         resourcePanel = new ResourcePanel<>(rowHighlightTracker, model, configuration);
         timeLinePanel = new TimeLinePanel(model, this.configuration);
 
+        wireInteractions();
 
         scrollPane = new JScrollPane(chartPanel) { //adding MWheelListener to the scrollpane didn't work correctly
             @Override
@@ -54,6 +57,43 @@ public class ScheduleChart<R extends Resource, TaskType extends Task> implements
         scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
 
         recalculateSizes();
+    }
+
+
+    private void wireInteractions() {
+        MouseAdapter interactionInvoker = new MouseAdapter() {
+            @Override
+            public void mouseMoved(MouseEvent e) {
+                ResourceAndTask<R, TaskType> resourceAndTask = getResourceAndTask(e.getX(), e.getY());
+                if (resourceAndTask.hasBoth()) {
+                    interactions.mouseOverTask(resourceAndTask.task, e);
+                } else if (resourceAndTask.onlyResource()) {
+                    interactions.mouseOverRow(resourceAndTask.resource, e);
+                }
+            }
+
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                ResourceAndTask<R, TaskType> resourceAndTask = getResourceAndTask(e.getX(), e.getY());
+                if (resourceAndTask.hasBoth()) {
+                    interactions.mouseClickedOnTask(resourceAndTask.task, e);
+                } else if (resourceAndTask.onlyResource()) {
+                    interactions.mouseClickedOnRow(resourceAndTask.resource, e);//todo later: maybe evaluate clicked time
+                }
+            }
+        };
+        chartPanel.addMouseMotionListener(interactionInvoker);
+        chartPanel.addMouseListener(interactionInvoker);
+    }
+
+    ResourceAndTask<R, TaskType> getResourceAndTask(int x, int y) {
+        ResourceAndTask<R, TaskType> retval = new ResourceAndTask<>(null, null);
+        int rowNumber = y / configuration.getRowHeightWithMargins();
+        if (rowNumber < model.getResources().size()) {
+            retval.resource = model.getResources().get(rowNumber);
+            retval.task = chartPanel.getTaskAt(x, y);
+        }
+        return retval;
     }
 
     private void recalculateSizes() {
@@ -83,6 +123,10 @@ public class ScheduleChart<R extends Resource, TaskType extends Task> implements
 
     public JComponent getComponent() {
         return scrollPane;
+    }
+
+    public <I extends Interactions<R, TaskType>> void setInteractions(I interactions) {
+        this.interactions = interactions;
     }
 
     public void setRowHeight(int rowHeight) {
@@ -129,5 +173,23 @@ public class ScheduleChart<R extends Resource, TaskType extends Task> implements
             return (int) Duration.between(model.getStart(), time).toHours() * configuration.pixelsPerHour;
         }
 
+    }
+
+    static class ResourceAndTask<R extends Resource, TaskType extends Task> {
+        R resource;
+        TaskType task;
+
+        public ResourceAndTask(R resource, TaskType task) {
+            this.resource = resource;
+            this.task = task;
+        }
+
+        public boolean hasBoth() {
+            return resource != null && task != null;
+        }
+
+        public boolean onlyResource() {
+            return resource != null && task == null;
+        }
     }
 }

@@ -3,8 +3,6 @@ package schedule.interaction;
 import schedule.model.Resource;
 import schedule.model.Task;
 
-import javax.swing.*;
-import java.awt.*;
 import java.awt.event.MouseEvent;
 
 public interface Interactions<R extends Resource, TaskType extends Task> {
@@ -12,23 +10,26 @@ public interface Interactions<R extends Resource, TaskType extends Task> {
 
     void mouseClickedOnTask(TaskType task, MouseEvent e);
 
-    void mouseClickedOnChart(R row, MouseEvent e);
+    void mouseClickedOnRow(R resource, MouseEvent e);
+
+    void mouseOverRow(R resource, MouseEvent e);
 
     class Default<R extends Resource, TaskType extends Task> implements Interactions<R, TaskType> {
 
         @Override
         public void mouseOverTask(TaskType task, MouseEvent e) {
-            Component sender = e.getComponent();
-            PopupFactory.getSharedInstance().getPopup(sender, new JLabel("Aha"), e.getX(), e.getY()).show();
         }
 
         @Override
         public void mouseClickedOnTask(TaskType task, MouseEvent e) {
-
         }
 
         @Override
-        public void mouseClickedOnChart(R row, MouseEvent e) {
+        public void mouseClickedOnRow(R resource, MouseEvent e) {
+        }
+
+        @Override
+        public void mouseOverRow(R resource, MouseEvent e) {
 
         }
     }
