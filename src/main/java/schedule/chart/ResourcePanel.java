@@ -1,22 +1,24 @@
 package schedule.chart;
 
 import schedule.model.Resource;
+import schedule.model.ScheduleModel;
+import schedule.model.Task;
 
 import java.awt.*;
 import java.util.List;
 
 class ResourcePanel<R extends Resource> extends PanelWithRows {
+    private final ScheduleModel<R, ? extends Task> model;
     ResourceRenderer<R> resourceRenderer = new ResourceRenderer.Default<>();
-    final ScheduleChart<R, ?> scheduleChart;
 
-    public ResourcePanel(ScheduleChart<R, ?> scheduleChart, RowHighlightTracker rowHighlightTracker) {
-        super(scheduleChart.configuration, rowHighlightTracker);
-        this.scheduleChart = scheduleChart;
+    public ResourcePanel(RowHighlightTracker rowHighlightTracker, ScheduleModel<R, ? extends Task> model, ScheduleChart.Configuration configuration) {
+        super(configuration, rowHighlightTracker);
+        this.model = model;
     }
 
     @Override
     protected void paintComponent(Graphics g) {
-        List<R> resources = scheduleChart.model.getResources();
+        List<R> resources = model.getResources();
         for (int i = 0; i < resources.size(); i++) {
             renderRow(g, i, resources.get(i));
         }

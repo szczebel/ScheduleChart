@@ -1,5 +1,6 @@
 package schedule.chart;
 
+import schedule.interaction.Interactions;
 import schedule.model.Resource;
 import schedule.model.ScheduleModel;
 import schedule.model.Task;
@@ -17,9 +18,11 @@ public class ScheduleChart<R extends Resource, TaskType extends Task> implements
     final Configuration configuration = new Configuration();
 
     private JScrollPane scrollPane;
-    private ChartPanel chartPanel;
-    private ResourcePanel resourcePanel;
+    private ChartPanel<R, TaskType> chartPanel;
+    private ResourcePanel<R> resourcePanel;
     private TimeLinePanel timeLinePanel;
+
+    Interactions<R, TaskType> interactions = new Interactions.Default<>();
 
     public ScheduleChart(ScheduleModel<R, TaskType> scheduleModel) {
         model = scheduleModel;
@@ -30,11 +33,12 @@ public class ScheduleChart<R extends Resource, TaskType extends Task> implements
 
     private void buildComponents() {
         RowHighlightTracker rowHighlightTracker = new RowHighlightTracker(this);
-        chartPanel = new ChartPanel<>(this, rowHighlightTracker);
-        resourcePanel = new ResourcePanel<>(this, rowHighlightTracker);
-        timeLinePanel = new TimeLinePanel(this);
+        chartPanel = new ChartPanel<>(rowHighlightTracker, model, configuration);
+        resourcePanel = new ResourcePanel<>(rowHighlightTracker, model, configuration);
+        timeLinePanel = new TimeLinePanel(model, this.configuration);
 
-        scrollPane = new JScrollPane(chartPanel) { //adding MWListener to the scrollpane didn't work correctly
+
+        scrollPane = new JScrollPane(chartPanel) { //adding MWheelListener to the scrollpane didn't work correctly
             @Override
             protected void processMouseWheelEvent(MouseWheelEvent e) {
                 if (e.isControlDown()) {
@@ -62,7 +66,7 @@ public class ScheduleChart<R extends Resource, TaskType extends Task> implements
     }
 
     private int chartWidth() {
-        return timeToX(model.getEnd());
+        return configuration.timeToX(model.getEnd());
     }
 
     private int chartHeight() {
@@ -75,10 +79,6 @@ public class ScheduleChart<R extends Resource, TaskType extends Task> implements
 
     public void zoomOut() {
         setPixelsPerHour(configuration.pixelsPerHour / 2);
-    }
-
-    int timeToX(ZonedDateTime time) {
-        return (int) Duration.between(model.getStart(), time).toHours() * configuration.pixelsPerHour;
     }
 
     public JComponent getComponent() {
@@ -110,12 +110,13 @@ public class ScheduleChart<R extends Resource, TaskType extends Task> implements
         getComponent().repaint();
     }
 
+
     @Override
     public void dataChanged() {
         recalculateSizes();
     }
 
-    public static class Configuration {
+    public class Configuration {
         int rowHeight = 14;
         int pixelsPerHour = 2;
         int rowMargin = 2;
@@ -123,5 +124,10 @@ public class ScheduleChart<R extends Resource, TaskType extends Task> implements
         int getRowHeightWithMargins() {
             return rowHeight + 2 * rowMargin;
         }
+
+        int timeToX(ZonedDateTime time) {
+            return (int) Duration.between(model.getStart(), time).toHours() * configuration.pixelsPerHour;
+        }
+
     }
 }

@@ -14,11 +14,11 @@ public class Util {
         return time;
     }
 
-    static void renderDayLines(Graphics g, ScheduleChart scheduleChart, int height, DateTimeFormatter formatter) {
-        ZonedDateTime time = toMidnight(scheduleChart.model.getStart());
-        while (time.isBefore(scheduleChart.model.getEnd())) {
+    static void renderDayLines(Graphics g, int height, DateTimeFormatter formatter, ScheduleChart.Configuration configuration, ZonedDateTime start, ZonedDateTime end) {
+        ZonedDateTime time = toMidnight(start);
+        while (time.isBefore(end)) {
             time = time.plusDays(1);
-            int x = scheduleChart.timeToX(time);
+            int x = configuration.timeToX(time);
             g.setColor(Color.lightGray);
             g.drawLine(x, 0, x, height);
             if (formatter != null) {
