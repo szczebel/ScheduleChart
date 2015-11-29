@@ -20,8 +20,8 @@ public class Util {
     }
 
     static void renderDayLines(Graphics g, ScheduleChart scheduleChart, int height, DateTimeFormatter formatter) {
-        ZonedDateTime time = toMidnight(scheduleChart.start);
-        while (time.isBefore(scheduleChart.end)) {
+        ZonedDateTime time = toMidnight(scheduleChart.model.getStart());
+        while (time.isBefore(scheduleChart.model.getEnd())) {
             time = time.plusDays(1);
             int x = scheduleChart.timeToX(time);
             g.setColor(Color.lightGray);

@@ -12,8 +12,6 @@ import java.time.ZonedDateTime;
 @SuppressWarnings("unused")
 public class ScheduleChart<R extends Resource, E extends Event> implements ScheduleModel.Listener {
     final ScheduleModel<R, E> model;
-    final ZonedDateTime start;
-    final ZonedDateTime end;
     int rowHeight = 12;
     int pixelsPerHour = 2;
     int rowMargin = 2;
@@ -23,10 +21,8 @@ public class ScheduleChart<R extends Resource, E extends Event> implements Sched
     private ResourcePanel resourcePanel;
     private TimeLinePanel timeLinePanel;
 
-    public ScheduleChart(ScheduleModel<R, E> scheduleModel, ZonedDateTime start, ZonedDateTime end) {
+    public ScheduleChart(ScheduleModel<R, E> scheduleModel) {
         model = scheduleModel;
-        this.start = start;
-        this.end = end;
         buildComponents();
         model.setListener(this);
     }
@@ -58,7 +54,7 @@ public class ScheduleChart<R extends Resource, E extends Event> implements Sched
     }
 
     private int chartWidth() {
-        return timeToX(end);
+        return timeToX(model.getEnd());
     }
 
     private int chartHeight() {
@@ -74,7 +70,7 @@ public class ScheduleChart<R extends Resource, E extends Event> implements Sched
     }
 
     int timeToX(ZonedDateTime time) {
-        return (int) Duration.between(start, time).toHours() * pixelsPerHour;
+        return (int) Duration.between(model.getStart(), time).toHours() * pixelsPerHour;
     }
 
     public JComponent getComponent() {

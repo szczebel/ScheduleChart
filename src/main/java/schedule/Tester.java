@@ -21,7 +21,7 @@ public class Tester {
         ZonedDateTime start = ZonedDateTime.now().minusDays(60);
         ZonedDateTime end = ZonedDateTime.now();
         new DataGenerator().generate(scheduleModel, start, end);
-        ScheduleChart<BasicResource, BasicEvent> chart = new ScheduleChart<>(scheduleModel, start, end);
+        ScheduleChart<BasicResource, BasicEvent> chart = new ScheduleChart<>(scheduleModel);
         chart.setRowHeight(14);
         chart.setEventRenderer(new Green());
         frame.add(chart.getComponent());
