@@ -6,6 +6,7 @@ import schedule.model.Task;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseWheelEvent;
 import java.time.Duration;
 import java.time.ZonedDateTime;
 
@@ -33,7 +34,15 @@ public class ScheduleChart<R extends Resource, TaskType extends Task> implements
         resourcePanel = new ResourcePanel<>(this, rowHighlightTracker);
         timeLinePanel = new TimeLinePanel(this);
 
-        scrollPane = new JScrollPane(chartPanel);
+        scrollPane = new JScrollPane(chartPanel) { //adding MWListener to the scrollpane didn't work correctly
+            @Override
+            protected void processMouseWheelEvent(MouseWheelEvent e) {
+                if (e.isControlDown()) {
+                    if (e.getWheelRotation() > 0) zoomIn();
+                    if (e.getWheelRotation() < 0) zoomOut();
+                } else super.processMouseWheelEvent(e);
+            }
+        };
         scrollPane.setColumnHeaderView(timeLinePanel);
         scrollPane.setRowHeaderView(resourcePanel);
 
@@ -41,7 +50,6 @@ public class ScheduleChart<R extends Resource, TaskType extends Task> implements
         scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
 
         recalculateSizes();
-
     }
 
     private void recalculateSizes() {
