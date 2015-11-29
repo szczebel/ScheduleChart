@@ -11,6 +11,7 @@ import java.time.ZonedDateTime;
 
 @SuppressWarnings("unused")
 public class ScheduleChart<R extends Resource, E extends Event> implements ScheduleModel.Listener {
+    private static final int MAX_PIXELS_PER_HOUR = 60;
     final ScheduleModel<R, E> model;
     final Configuration configuration = new Configuration();
 
@@ -82,7 +83,7 @@ public class ScheduleChart<R extends Resource, E extends Event> implements Sched
     }
 
     private void setPixelsPerHour(int pixelsPerHour) {
-        configuration.pixelsPerHour = Math.max(1, pixelsPerHour);
+        configuration.pixelsPerHour = Math.min(Math.max(1, pixelsPerHour), MAX_PIXELS_PER_HOUR);
         recalculateSizes();
     }
 

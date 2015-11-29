@@ -4,6 +4,7 @@ import schedule.model.Event;
 import schedule.model.Resource;
 
 import java.awt.*;
+import java.awt.event.MouseWheelEvent;
 import java.util.List;
 
 class ChartPanel<R extends Resource, E extends Event> extends PanelWithRows {
@@ -14,6 +15,15 @@ class ChartPanel<R extends Resource, E extends Event> extends PanelWithRows {
     public ChartPanel(ScheduleChart<R, E> scheduleChart, RowHighlightTracker rowHighlightTracker) {
         super(scheduleChart.configuration, rowHighlightTracker);
         this.scheduleChart = scheduleChart;
+
+        addMouseWheelListener(this::onWheelEvent);
+    }
+
+    private void onWheelEvent(MouseWheelEvent e) {
+        if (e.isControlDown()) {
+            if (e.getWheelRotation() > 0) scheduleChart.zoomIn();
+            if (e.getWheelRotation() < 0) scheduleChart.zoomOut();
+        }
     }
 
     @Override
