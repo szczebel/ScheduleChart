@@ -12,7 +12,6 @@ public class DataGenerator {
     void generate(BasicScheduleModel<BasicResource, BasicEvent> model, ZonedDateTime start, ZonedDateTime end) {
         List<BasicResource> resources = new ArrayList<>();
         for (int i = 100; i <= 200; ++i) resources.add(new BasicResource("Registration : KR ABC" + i));
-        model.register(resources);
         resources.forEach(resource -> buildLineOfWork(resource, start, end, model));
     }
 

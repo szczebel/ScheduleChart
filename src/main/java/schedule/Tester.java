@@ -10,7 +10,7 @@ public class Tester {
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
         BasicScheduleModel<BasicResource, BasicEvent> scheduleModel = new BasicScheduleModel<>();
-        ZonedDateTime start = ZonedDateTime.now().minusDays(30);
+        ZonedDateTime start = ZonedDateTime.now().minusDays(60);
         ZonedDateTime end = ZonedDateTime.now();
         new DataGenerator().generate(scheduleModel, start, end);
         frame.add(new ScheduleChart<>(scheduleModel, start, end).getComponent());

@@ -8,6 +8,8 @@ interface ScheduleModel<R extends Resource, E extends Event> {
 
     Collection<E> getEventsAssignedTo(R resource);
 
+    void setListener(Listener listener);
+
     interface Listener {
         void dataChanged();
     }

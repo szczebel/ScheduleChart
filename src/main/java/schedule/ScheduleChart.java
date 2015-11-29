@@ -6,12 +6,12 @@ import java.time.Duration;
 import java.time.ZonedDateTime;
 import java.util.List;
 
-public class ScheduleChart<R extends Resource, E extends Event> {
+public class ScheduleChart<R extends Resource, E extends Event> implements ScheduleModel.Listener {
     final ScheduleModel<R, E> model;
     final ZonedDateTime start;
     final ZonedDateTime end;
-    int rowHeight = 20;
-    int pixelsPerHour = 6;
+    int rowHeight = 12;
+    int pixelsPerHour = 2;
     int rowMargin = 2;
     EventRenderer<E> eventRenderer = new EventRenderer.Default<>();
     ResourceRenderer<R> resourceRenderer = new ResourceRenderer.Default<>();
@@ -26,6 +26,7 @@ public class ScheduleChart<R extends Resource, E extends Event> {
         this.start = start;
         this.end = end;
         buildComponents();
+        model.setListener(this);
     }
 
 
@@ -102,6 +103,11 @@ public class ScheduleChart<R extends Resource, E extends Event> {
     public void setResourceRenderer(ResourceRenderer<R> resourceRenderer) {
         this.resourceRenderer = resourceRenderer;
         getComponent().repaint();
+    }
+
+    @Override
+    public void dataChanged() {
+        recalculateSizes();
     }
 
 
