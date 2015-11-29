@@ -49,7 +49,7 @@ public class ScheduleChart<R extends Resource, E extends Event> implements Sched
         chartPanel.setPreferredSize(new Dimension(chartWidth(), chartHeight()));
         resourcePanel.setPreferredSize(new Dimension(200, chartHeight()));
         timeLinePanel.setPreferredSize(new Dimension(chartWidth(), 30));
-
+        chartPanel.revalidate();
         getComponent().repaint();
     }
 
