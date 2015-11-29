@@ -3,16 +3,16 @@ package schedule.chart;
 import schedule.model.Event;
 import schedule.model.Resource;
 
-import javax.swing.*;
 import java.awt.*;
 import java.util.List;
 
-class ChartPanel<R extends Resource, E extends Event> extends JPanel {
-    private ScheduleChart<R, E> scheduleChart;
+class ChartPanel<R extends Resource, E extends Event> extends PanelWithRows {
+    final ScheduleChart<R, E> scheduleChart;
     EventRenderer<E> eventRenderer = new EventRenderer.Default<>();
 
 
-    public ChartPanel(ScheduleChart<R, E> scheduleChart) {
+    public ChartPanel(ScheduleChart<R, E> scheduleChart, RowHighlightTracker rowHighlightTracker) {
+        super(scheduleChart.configuration, rowHighlightTracker);
         this.scheduleChart = scheduleChart;
     }
 
@@ -20,17 +20,17 @@ class ChartPanel<R extends Resource, E extends Event> extends JPanel {
     protected void paintComponent(Graphics g) {
         List<R> resources = scheduleChart.model.getResources();
         for (int i = 0; i < resources.size(); i++) {
-            Util.renderRowBackground(g, i, getWidth(), scheduleChart.rowHeight, scheduleChart.rowMargin);
+            renderRowBackground(g, i);
         }
         Util.renderDayLines(g, scheduleChart, getHeight(), null);
         for (int i = 0; i < resources.size(); i++) {
-            renderRow(g, i, resources.get(i));
+            renderRowEvents(g, i, resources.get(i));
         }
     }
 
-    private void renderRow(Graphics g, int rowNumber, R resource) {
-        int y = rowNumber * (scheduleChart.rowHeight + 2 * scheduleChart.rowMargin);
-        scheduleChart.model.getEventsAssignedTo(resource).forEach(event -> renderEvent(g, event, y + scheduleChart.rowMargin));
+    private void renderRowEvents(Graphics g, int rowNumber, R resource) {
+        int y = rowNumber * configuration.getRowHeightWithMargins();
+        scheduleChart.model.getEventsAssignedTo(resource).forEach(event -> renderEvent(g, event, y + configuration.rowMargin));
     }
 
 
@@ -38,8 +38,8 @@ class ChartPanel<R extends Resource, E extends Event> extends JPanel {
         int x = scheduleChart.timeToX(event.getStart());
         int width = scheduleChart.timeToX(event.getEnd()) - x;
         Component renderingComponent = eventRenderer.getRenderingComponent(event);
-        renderingComponent.setSize(new Dimension(width, scheduleChart.rowHeight));
-        renderingComponent.paint(g.create(x, y, width, scheduleChart.rowHeight));
+        renderingComponent.setSize(new Dimension(width, configuration.rowHeight));
+        renderingComponent.paint(g.create(x, y, width, configuration.rowHeight));
 
     }
 }

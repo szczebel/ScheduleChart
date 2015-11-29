@@ -23,23 +23,18 @@ public class Tester {
         new DataGenerator().generate(scheduleModel, start, end);
         ScheduleChart<BasicResource, BasicEvent> chart = new ScheduleChart<>(scheduleModel);
         chart.setRowHeight(14);
-        chart.setEventRenderer(new Green());
+        chart.setEventRenderer(new RaisedColored(Color.green));
+        chart.getComponent().setPreferredSize(new Dimension(1000, 500));
         frame.add(chart.getComponent());
         frame.pack();
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
-
-        end = end.minusNanos(end.getNano());
-        end = end.minusSeconds(end.getSecond());
-        end = end.minusMinutes(end.getMinute());
-        end = end.minusHours(end.getHour());
-        System.out.println(end);
     }
 
-    private static class Green extends EventRenderer.Default<BasicEvent> {
+    private static class RaisedColored extends EventRenderer.Default<BasicEvent> {
 
-        public Green() {
-            setBackground(Color.green);
+        public RaisedColored(Color green) {
+            setBackground(green);
             setOpaque(true);
             setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
         }

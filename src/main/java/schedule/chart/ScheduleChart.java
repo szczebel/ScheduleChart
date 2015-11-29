@@ -12,9 +12,7 @@ import java.time.ZonedDateTime;
 @SuppressWarnings("unused")
 public class ScheduleChart<R extends Resource, E extends Event> implements ScheduleModel.Listener {
     final ScheduleModel<R, E> model;
-    int rowHeight = 12;
-    int pixelsPerHour = 2;
-    int rowMargin = 2;
+    final Configuration configuration = new Configuration();
 
     private JScrollPane scrollPane;
     private ChartPanel chartPanel;
@@ -29,8 +27,9 @@ public class ScheduleChart<R extends Resource, E extends Event> implements Sched
 
 
     private void buildComponents() {
-        chartPanel = new ChartPanel<>(this);
-        resourcePanel = new ResourcePanel<>(this);
+        RowHighlightTracker rowHighlightTracker = new RowHighlightTracker(this);
+        chartPanel = new ChartPanel<>(this, rowHighlightTracker);
+        resourcePanel = new ResourcePanel<>(this, rowHighlightTracker);
         timeLinePanel = new TimeLinePanel(this);
 
         scrollPane = new JScrollPane(chartPanel);
@@ -39,7 +38,6 @@ public class ScheduleChart<R extends Resource, E extends Event> implements Sched
 
         scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
         scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
-        scrollPane.getVerticalScrollBar().setUnitIncrement(rowHeight + 2 * rowMargin);
 
         recalculateSizes();
 
@@ -49,6 +47,7 @@ public class ScheduleChart<R extends Resource, E extends Event> implements Sched
         chartPanel.setPreferredSize(new Dimension(chartWidth(), chartHeight()));
         resourcePanel.setPreferredSize(new Dimension(200, chartHeight()));
         timeLinePanel.setPreferredSize(new Dimension(chartWidth(), 30));
+        scrollPane.getVerticalScrollBar().setUnitIncrement(configuration.getRowHeightWithMargins());
         chartPanel.revalidate();
         getComponent().repaint();
     }
@@ -58,19 +57,19 @@ public class ScheduleChart<R extends Resource, E extends Event> implements Sched
     }
 
     private int chartHeight() {
-        return model.getResources().size() * (rowHeight + 2 * rowMargin);
+        return model.getResources().size() * configuration.getRowHeightWithMargins();
     }
 
     public void zoomIn() {
-        setPixelsPerHour(pixelsPerHour * 2);
+        setPixelsPerHour(configuration.pixelsPerHour * 2);
     }
 
     public void zoomOut() {
-        setPixelsPerHour(pixelsPerHour / 2);
+        setPixelsPerHour(configuration.pixelsPerHour / 2);
     }
 
     int timeToX(ZonedDateTime time) {
-        return (int) Duration.between(model.getStart(), time).toHours() * pixelsPerHour;
+        return (int) Duration.between(model.getStart(), time).toHours() * configuration.pixelsPerHour;
     }
 
     public JComponent getComponent() {
@@ -78,18 +77,17 @@ public class ScheduleChart<R extends Resource, E extends Event> implements Sched
     }
 
     public void setRowHeight(int rowHeight) {
-        this.rowHeight = rowHeight;
+        configuration.rowHeight = rowHeight;
         recalculateSizes();
     }
 
     private void setPixelsPerHour(int pixelsPerHour) {
-        this.pixelsPerHour = pixelsPerHour;
-        if (pixelsPerHour < 1) this.pixelsPerHour = 1;
+        configuration.pixelsPerHour = Math.max(1, pixelsPerHour);
         recalculateSizes();
     }
 
     public void setRowMargin(int rowMargin) {
-        this.rowMargin = rowMargin;
+        configuration.rowMargin = rowMargin;
         recalculateSizes();
     }
 
@@ -106,5 +104,15 @@ public class ScheduleChart<R extends Resource, E extends Event> implements Sched
     @Override
     public void dataChanged() {
         recalculateSizes();
+    }
+
+    public static class Configuration {
+        int rowHeight = 12;
+        int pixelsPerHour = 2;
+        int rowMargin = 2;
+
+        int getRowHeightWithMargins() {
+            return rowHeight + 2 * rowMargin;
+        }
     }
 }
