@@ -39,6 +39,7 @@ class ChartPanel<R extends Resource, E extends Event> extends PanelWithRows {
         int width = scheduleChart.timeToX(event.getEnd()) - x;
         Component renderingComponent = eventRenderer.getRenderingComponent(event);
         renderingComponent.setSize(new Dimension(width, configuration.rowHeight));
+        renderingComponent.doLayout();
         renderingComponent.paint(g.create(x, y, width, configuration.rowHeight));
 
     }

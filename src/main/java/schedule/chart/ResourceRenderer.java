@@ -17,8 +17,12 @@ public interface ResourceRenderer<R extends Resource> {
 
         @Override
         public Component getRenderingComponent(R resource) {
-            setText(resource.toString());
+            setText(getTextFromResource(resource));
             return this;
+        }
+
+        protected String getTextFromResource(R resource) {
+            return resource.toString();
         }
     }
 }

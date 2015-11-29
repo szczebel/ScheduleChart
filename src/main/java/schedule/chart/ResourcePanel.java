@@ -27,6 +27,7 @@ class ResourcePanel<R extends Resource> extends PanelWithRows {
         Component renderingComponent = resourceRenderer.getRenderingComponent(resource);
         int y = rowNumber * configuration.getRowHeightWithMargins() + configuration.rowMargin;
         renderingComponent.setSize(new Dimension(getWidth(), configuration.rowHeight));
+        renderingComponent.doLayout();
         renderingComponent.paint(g.create(0, y, getWidth(), configuration.rowHeight));
 
     }
