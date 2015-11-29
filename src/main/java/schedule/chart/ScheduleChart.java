@@ -144,7 +144,7 @@ public class ScheduleChart<R extends Resource, TaskType extends Task> implements
         recalculateSizes();
     }
 
-    public void setEventRenderer(TaskRenderer<TaskType> taskRenderer) {
+    public void setTaskRenderer(TaskRenderer<TaskType> taskRenderer) {
         chartPanel.taskRenderer = taskRenderer;
         getComponent().repaint();
     }

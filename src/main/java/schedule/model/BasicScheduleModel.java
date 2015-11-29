@@ -9,13 +9,14 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+@SuppressWarnings("unused")
 public class BasicScheduleModel<R extends Resource, E extends Task> implements ScheduleModel<R, E> {
     final Multimap<R, E> assignments = HashMultimap.create();
     final List<R> resources = new ArrayList<>();
     Listener listener = () -> {
     };
     private ZonedDateTime end = ZonedDateTime.now();
-    private ZonedDateTime start = ZonedDateTime.now().minusDays(60);
+    private ZonedDateTime start = ZonedDateTime.now().minusDays(7);
 
     public void addResources(Collection<R> resources) {
         this.resources.addAll(resources);

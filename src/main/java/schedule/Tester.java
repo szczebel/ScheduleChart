@@ -23,7 +23,7 @@ public class Tester {
         new DataGenerator().generate(scheduleModel, start, end);
         ScheduleChart<BasicResource, BasicTask> chart = new ScheduleChart<>(scheduleModel);
         chart.setRowHeight(14);
-        chart.setEventRenderer(new RaisedColored(Color.green));
+        chart.setTaskRenderer(new RaisedColored(Color.green));
         chart.getComponent().setPreferredSize(new Dimension(1000, 500));
         frame.add(chart.getComponent());
         frame.pack();
