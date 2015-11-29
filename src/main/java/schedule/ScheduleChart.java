@@ -16,29 +16,42 @@ public class ScheduleChart<R extends Resource, E extends Event> {
     EventRenderer<E> eventRenderer = new EventRenderer.Default<>();
     ResourceRenderer<R> resourceRenderer = new ResourceRenderer.Default<>();
 
-    private final JComponent component;
+    private JScrollPane scrollPane;
+    private ChartPanel chartPanel;
+    private ResourcePanel resourcePanel;
+    private TimeLinePanel timeLinePanel;
 
     public ScheduleChart(ScheduleModel<R, E> scheduleModel, ZonedDateTime start, ZonedDateTime end) {
         model = scheduleModel;
         this.start = start;
         this.end = end;
-        component = buildComponent();
+        buildComponents();
     }
 
 
-    private JComponent buildComponent() {
-        JPanel panel = new ChartPanel();
-        panel.setPreferredSize(new Dimension(chartWidth(), chartHeight()));
+    private void buildComponents() {
+        chartPanel = new ChartPanel();
+        resourcePanel = new ResourcePanel();
+        timeLinePanel = new TimeLinePanel();
 
-        JScrollPane scrollPane = new JScrollPane(panel);
-
-        scrollPane.setColumnHeaderView(createTimeline());
-        scrollPane.setRowHeaderView(createResourceList());
+        scrollPane = new JScrollPane(chartPanel);
+        scrollPane.setColumnHeaderView(timeLinePanel);
+        scrollPane.setRowHeaderView(resourcePanel);
 
         scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
         scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
         scrollPane.getVerticalScrollBar().setUnitIncrement(rowHeight + 2 * rowMargin);
-        return scrollPane;
+
+        recalculateSizes();
+
+    }
+
+    private void recalculateSizes() {
+        chartPanel.setPreferredSize(new Dimension(chartWidth(), chartHeight()));
+        resourcePanel.setPreferredSize(new Dimension(200, chartHeight()));
+        timeLinePanel.setPreferredSize(new Dimension(chartWidth(), 30));
+
+        getComponent().repaint();
     }
 
     private int chartWidth() {
@@ -49,17 +62,12 @@ public class ScheduleChart<R extends Resource, E extends Event> {
         return model.getResources().size() * (rowHeight + 2 * rowMargin);
     }
 
-    private Component createResourceList() {
-        JPanel panel = new ResourcePanel();
-        panel.setPreferredSize(new Dimension(200, chartHeight()));
-        return panel;
+    public void zoomIn() {
+        setPixelsPerHour(pixelsPerHour * 2);
     }
 
-    private Component createTimeline() {
-        JPanel panel = new JPanel();
-        panel.setPreferredSize(new Dimension(chartWidth(), 30));
-        panel.setBackground(Color.cyan);
-        return panel;
+    public void zoomOut() {
+        setPixelsPerHour(pixelsPerHour / 2);
     }
 
     int timeToX(ZonedDateTime time) {
@@ -67,27 +75,33 @@ public class ScheduleChart<R extends Resource, E extends Event> {
     }
 
     public JComponent getComponent() {
-        return component;
+        return scrollPane;
     }
 
     public void setRowHeight(int rowHeight) {
         this.rowHeight = rowHeight;
+        recalculateSizes();
     }
 
-    public void setPixelsPerHour(int pixelsPerHour) {
+    private void setPixelsPerHour(int pixelsPerHour) {
         this.pixelsPerHour = pixelsPerHour;
+        if (pixelsPerHour < 1) this.pixelsPerHour = 1;
+        recalculateSizes();
     }
 
     public void setRowMargin(int rowMargin) {
         this.rowMargin = rowMargin;
+        recalculateSizes();
     }
 
     public void setEventRenderer(EventRenderer<E> eventRenderer) {
         this.eventRenderer = eventRenderer;
+        getComponent().repaint();
     }
 
     public void setResourceRenderer(ResourceRenderer<R> resourceRenderer) {
         this.resourceRenderer = resourceRenderer;
+        getComponent().repaint();
     }
 
 
@@ -119,6 +133,10 @@ public class ScheduleChart<R extends Resource, E extends Event> {
             renderingComponent.paint(g.create(x, y, width, rowHeight));
 
         }
+    }
+
+    private class TimeLinePanel extends JPanel {
+
     }
 
     private class ResourcePanel extends JPanel {
