@@ -1,4 +1,4 @@
-package schedule.chart;
+package schedule.view;
 
 import java.awt.*;
 import java.time.ZonedDateTime;
@@ -14,7 +14,7 @@ public class Util {
         return time;
     }
 
-    static void renderDayLines(Graphics g, int height, DateTimeFormatter formatter, ScheduleChart.Configuration configuration, ZonedDateTime start, ZonedDateTime end) {
+    static void renderDayLines(Graphics g, int height, DateTimeFormatter formatter, ScheduleView.Configuration configuration, ZonedDateTime start, ZonedDateTime end) {
         ZonedDateTime time = toMidnight(start);
         while (time.isBefore(end)) {
             time = time.plusDays(1);

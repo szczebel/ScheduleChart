@@ -14,7 +14,7 @@ public interface MouseInteractions<R extends Resource, TaskType extends Task> {
 
     void mouseClickedOnRow(R resource, MouseEvent e);
 
-    void mouseOverRow(R resource, MouseEvent e);
+    void mouseOverEmptySpace(R resource, MouseEvent e);
 
     void taskDraggedOverRow(TaskType task, R resource, MouseEvent e);
 
@@ -35,7 +35,7 @@ public interface MouseInteractions<R extends Resource, TaskType extends Task> {
         }
 
         @Override
-        public void mouseOverRow(R resource, MouseEvent e) {
+        public void mouseOverEmptySpace(R resource, MouseEvent e) {
 
         }
 
@@ -74,8 +74,8 @@ public interface MouseInteractions<R extends Resource, TaskType extends Task> {
         }
 
         @Override
-        public void mouseOverRow(R resource, MouseEvent e) {
-            allInteractions.forEach(i -> i.mouseOverRow(resource, e));
+        public void mouseOverEmptySpace(R resource, MouseEvent e) {
+            allInteractions.forEach(i -> i.mouseOverEmptySpace(resource, e));
         }
 
         @Override

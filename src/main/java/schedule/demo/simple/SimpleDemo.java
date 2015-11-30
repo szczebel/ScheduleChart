@@ -1,11 +1,11 @@
 package schedule.demo.simple;
 
-import schedule.chart.ScheduleChart;
-import schedule.chart.TaskRenderer;
 import schedule.interaction.Tooltips;
 import schedule.model.BasicResource;
 import schedule.model.BasicScheduleModel;
 import schedule.model.BasicTask;
+import schedule.view.ScheduleView;
+import schedule.view.TaskRenderer;
 
 import javax.swing.*;
 import javax.swing.border.BevelBorder;
@@ -24,7 +24,7 @@ public class SimpleDemo {
         ZonedDateTime start = ZonedDateTime.now().minusDays(60);
         ZonedDateTime end = ZonedDateTime.now();
         new DataGenerator().generate(scheduleModel, start, end);
-        ScheduleChart<BasicResource, BasicTask> chart = new ScheduleChart<>(scheduleModel);
+        ScheduleView<BasicResource, BasicTask> chart = new ScheduleView<>(scheduleModel);
         chart.setRowHeight(14);
         chart.setTaskRenderer(new RaisedColored(Color.green));
         //noinspection unchecked

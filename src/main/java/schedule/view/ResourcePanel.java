@@ -1,4 +1,4 @@
-package schedule.chart;
+package schedule.view;
 
 import schedule.model.Resource;
 import schedule.model.ScheduleModel;
@@ -11,7 +11,7 @@ class ResourcePanel<R extends Resource> extends PanelWithRows {
     private final ScheduleModel<R, ? extends Task> model;
     ResourceRenderer<R> resourceRenderer = new ResourceRenderer.Default<>();
 
-    public ResourcePanel(RowHighlightTracker rowHighlightTracker, ScheduleModel<R, ? extends Task> model, ScheduleChart.Configuration configuration) {
+    public ResourcePanel(RowHighlightTracker rowHighlightTracker, ScheduleModel<R, ? extends Task> model, ScheduleView.Configuration configuration) {
         super(configuration, rowHighlightTracker);
         this.model = model;
     }

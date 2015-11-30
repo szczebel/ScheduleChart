@@ -1,4 +1,4 @@
-package schedule.chart;
+package schedule.view;
 
 import javax.swing.*;
 import java.awt.*;
@@ -6,9 +6,9 @@ import java.awt.*;
 class PanelWithRows extends JPanel {
 
     RowHighlightTracker rowHighlightTracker;
-    ScheduleChart.Configuration configuration;
+    ScheduleView.Configuration configuration;
 
-    PanelWithRows(ScheduleChart.Configuration configuration, RowHighlightTracker rowHighlightTracker) {
+    PanelWithRows(ScheduleView.Configuration configuration, RowHighlightTracker rowHighlightTracker) {
         this.configuration = configuration;
         this.rowHighlightTracker = rowHighlightTracker;
         addMouseMotionListener(rowHighlightTracker);

@@ -1,4 +1,4 @@
-package schedule.chart;
+package schedule.view;
 
 import schedule.model.ScheduleModel;
 
@@ -9,9 +9,9 @@ import java.time.format.DateTimeFormatter;
 class TimeLinePanel extends JPanel {
 
     private ScheduleModel model;
-    private ScheduleChart.Configuration configuration;
+    private ScheduleView.Configuration configuration;
 
-    public TimeLinePanel(ScheduleModel model, ScheduleChart.Configuration configuration) {
+    public TimeLinePanel(ScheduleModel model, ScheduleView.Configuration configuration) {
         this.model = model;
         this.configuration = configuration;
     }

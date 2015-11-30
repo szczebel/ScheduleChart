@@ -1,4 +1,4 @@
-package schedule.chart;
+package schedule.view;
 
 import schedule.model.Task;
 

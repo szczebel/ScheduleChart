@@ -1,8 +1,8 @@
 package schedule.interaction;
 
-import schedule.chart.TaskRenderer;
 import schedule.model.Resource;
 import schedule.model.Task;
+import schedule.view.TaskRenderer;
 
 import javax.swing.*;
 import java.awt.*;
@@ -29,12 +29,21 @@ public class Tooltips<R extends Resource, TaskType extends Task> extends MouseIn
             renderingComponent.setPreferredSize(dimension);
         }
         if (currentPopup != null) currentPopup.hide();
-        currentPopup = PopupFactory.getSharedInstance().getPopup(e.getComponent(), renderingComponent, e.getXOnScreen(), e.getYOnScreen() - renderingComponent.getPreferredSize().height);
+        currentPopup = PopupFactory.getSharedInstance().getPopup(e.getComponent(), renderingComponent, e.getXOnScreen() + 16, e.getYOnScreen() - renderingComponent.getPreferredSize().height);
         currentPopup.show();
     }
 
     @Override
-    public void mouseOverRow(R resource, MouseEvent e) {
+    public void mouseOverEmptySpace(R resource, MouseEvent e) {
+        reset();
+    }
+
+    @Override
+    public void taskDraggedOverRow(TaskType task, R resource, MouseEvent e) {
+        reset();
+    }
+
+    void reset() {
         if (currentPopup != null) currentPopup.hide();
         currentPopup = null;
         currentlyShowing = null;

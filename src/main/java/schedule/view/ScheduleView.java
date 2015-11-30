@@ -1,4 +1,4 @@
-package schedule.chart;
+package schedule.view;
 
 import schedule.interaction.MouseInteractions;
 import schedule.interaction.Tooltips;
@@ -15,7 +15,7 @@ import java.time.Duration;
 import java.time.ZonedDateTime;
 
 @SuppressWarnings("unused")
-public class ScheduleChart<R extends Resource, TaskType extends Task> implements ScheduleModel.Listener {
+public class ScheduleView<R extends Resource, TaskType extends Task> implements ScheduleModel.Listener {
     private static final int MAX_PIXELS_PER_HOUR = 60;
     final ScheduleModel<R, TaskType> model;
     final Configuration configuration = new Configuration();
@@ -27,7 +27,7 @@ public class ScheduleChart<R extends Resource, TaskType extends Task> implements
 
     MouseInteractions<R, TaskType> mouseInteractions = new Tooltips<>(new TaskRenderer.Default<>());
 
-    public ScheduleChart(ScheduleModel<R, TaskType> scheduleModel) {
+    public ScheduleView(ScheduleModel<R, TaskType> scheduleModel) {
         model = scheduleModel;
         buildComponents();
         model.setListener(this);
@@ -174,7 +174,30 @@ public class ScheduleChart<R extends Resource, TaskType extends Task> implements
     }
 
     private class InteractionInvoker extends MouseAdapter {
+        ResourceAndTask<R, TaskType> dragSource;
 
+        @Override
+        public void mousePressed(MouseEvent e) {
+            dragSource = getResourceAndTask(e.getX(), e.getY());
+        }
+
+        @Override
+        public void mouseDragged(MouseEvent e) {
+            if (!dragSource.hasBoth()) return;
+            ResourceAndTask<R, TaskType> intermediateTarget = getResourceAndTask(e.getX(), e.getY());
+            if (intermediateTarget.resource != null) {
+                mouseInteractions.taskDraggedOverRow(dragSource.task, intermediateTarget.resource, e);
+            }
+        }
+
+        @Override
+        public void mouseReleased(MouseEvent e) {
+            if (!dragSource.hasBoth()) return;
+            ResourceAndTask<R, TaskType> target = getResourceAndTask(e.getX(), e.getY());
+            if (target.resource != null) {
+                mouseInteractions.taskDroppedOnRow(dragSource.task, target.resource, e);
+            }
+        }
 
         @Override
         public void mouseMoved(MouseEvent e) {
@@ -182,7 +205,7 @@ public class ScheduleChart<R extends Resource, TaskType extends Task> implements
             if (resourceAndTask.hasBoth()) {
                 mouseInteractions.mouseOverTask(resourceAndTask.task, e);
             } else if (resourceAndTask.onlyResource()) {
-                mouseInteractions.mouseOverRow(resourceAndTask.resource, e);
+                mouseInteractions.mouseOverEmptySpace(resourceAndTask.resource, e);
             }
         }
 

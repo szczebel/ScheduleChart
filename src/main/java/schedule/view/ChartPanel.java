@@ -1,4 +1,4 @@
-package schedule.chart;
+package schedule.view;
 
 import schedule.model.Resource;
 import schedule.model.ScheduleModel;
@@ -16,7 +16,7 @@ class ChartPanel<R extends Resource, TaskType extends Task> extends PanelWithRow
 
     final Map<Rectangle, TaskType> hitMap = new HashMap<>();
 
-    public ChartPanel(RowHighlightTracker rowHighlightTracker, ScheduleModel<R, TaskType> model, ScheduleChart.Configuration configuration) {
+    public ChartPanel(RowHighlightTracker rowHighlightTracker, ScheduleModel<R, TaskType> model, ScheduleView.Configuration configuration) {
         super(configuration, rowHighlightTracker);
         this.model = model;
     }
