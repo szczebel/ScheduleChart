@@ -1,4 +1,4 @@
-package schedule;
+package schedule.demo.simple;
 
 import schedule.model.BasicResource;
 import schedule.model.BasicScheduleModel;

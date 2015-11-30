@@ -8,7 +8,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 
-public class Tooltips<R extends Resource, TaskType extends Task> extends Interactions.Default<R, TaskType> {
+public class Tooltips<R extends Resource, TaskType extends Task> extends MouseInteractions.Default<R, TaskType> {
     final TaskRenderer<TaskType> renderer;
 
     private TaskType currentlyShowing;
@@ -40,8 +40,7 @@ public class Tooltips<R extends Resource, TaskType extends Task> extends Interac
         currentlyShowing = null;
     }
 
-    @SuppressWarnings("unused")
-    public static <R extends Resource, TaskType extends Task> Tooltips<R, TaskType> with(TaskRenderer<TaskType> renderer) {
+    public static <R extends Resource, TaskType extends Task> Tooltips<R, TaskType> renderWith(TaskRenderer<TaskType> renderer) {
         return new Tooltips<>(renderer);
     }
 }

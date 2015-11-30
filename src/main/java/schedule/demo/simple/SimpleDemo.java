@@ -1,7 +1,8 @@
-package schedule;
+package schedule.demo.simple;
 
 import schedule.chart.ScheduleChart;
 import schedule.chart.TaskRenderer;
+import schedule.interaction.Tooltips;
 import schedule.model.BasicResource;
 import schedule.model.BasicScheduleModel;
 import schedule.model.BasicTask;
@@ -11,7 +12,9 @@ import javax.swing.border.BevelBorder;
 import java.awt.*;
 import java.time.ZonedDateTime;
 
-public class Tester {
+import static schedule.interaction.MouseInteractions.Aggregate;
+
+public class SimpleDemo {
 
     public static void main(String[] args) {
         final JFrame frame = new JFrame("Schedule");
@@ -24,6 +27,14 @@ public class Tester {
         ScheduleChart<BasicResource, BasicTask> chart = new ScheduleChart<>(scheduleModel);
         chart.setRowHeight(14);
         chart.setTaskRenderer(new RaisedColored(Color.green));
+        //noinspection unchecked
+        chart.setMouseInteractions(
+                Aggregate.of(
+                        Tooltips.renderWith(new RaisedColored(Color.magenta))
+                )
+        );
+
+
         chart.getComponent().setPreferredSize(new Dimension(1000, 500));
         frame.add(chart.getComponent());
         frame.pack();

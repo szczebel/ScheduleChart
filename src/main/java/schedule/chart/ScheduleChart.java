@@ -1,6 +1,6 @@
 package schedule.chart;
 
-import schedule.interaction.Interactions;
+import schedule.interaction.MouseInteractions;
 import schedule.interaction.Tooltips;
 import schedule.model.Resource;
 import schedule.model.ScheduleModel;
@@ -25,7 +25,7 @@ public class ScheduleChart<R extends Resource, TaskType extends Task> implements
     private ResourcePanel<R> resourcePanel;
     private TimeLinePanel timeLinePanel;
 
-    Interactions<R, TaskType> interactions = new Tooltips<>(new TaskRenderer.Default<>());
+    MouseInteractions<R, TaskType> mouseInteractions = new Tooltips<>(new TaskRenderer.Default<>());
 
     public ScheduleChart(ScheduleModel<R, TaskType> scheduleModel) {
         model = scheduleModel;
@@ -61,27 +61,7 @@ public class ScheduleChart<R extends Resource, TaskType extends Task> implements
 
 
     private void wireInteractions() {
-        MouseAdapter interactionInvoker = new MouseAdapter() {
-            @Override
-            public void mouseMoved(MouseEvent e) {
-                ResourceAndTask<R, TaskType> resourceAndTask = getResourceAndTask(e.getX(), e.getY());
-                if (resourceAndTask.hasBoth()) {
-                    interactions.mouseOverTask(resourceAndTask.task, e);
-                } else if (resourceAndTask.onlyResource()) {
-                    interactions.mouseOverRow(resourceAndTask.resource, e);
-                }
-            }
-
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                ResourceAndTask<R, TaskType> resourceAndTask = getResourceAndTask(e.getX(), e.getY());
-                if (resourceAndTask.hasBoth()) {
-                    interactions.mouseClickedOnTask(resourceAndTask.task, e);
-                } else if (resourceAndTask.onlyResource()) {
-                    interactions.mouseClickedOnRow(resourceAndTask.resource, e);//todo later: maybe evaluate clicked time
-                }
-            }
-        };
+        MouseAdapter interactionInvoker = new InteractionInvoker();
         chartPanel.addMouseMotionListener(interactionInvoker);
         chartPanel.addMouseListener(interactionInvoker);
     }
@@ -125,8 +105,8 @@ public class ScheduleChart<R extends Resource, TaskType extends Task> implements
         return scrollPane;
     }
 
-    public <I extends Interactions<R, TaskType>> void setInteractions(I interactions) {
-        this.interactions = interactions;
+    public <I extends MouseInteractions<R, TaskType>> void setMouseInteractions(I mouseInteractions) {
+        this.mouseInteractions = mouseInteractions;
     }
 
     public void setRowHeight(int rowHeight) {
@@ -190,6 +170,30 @@ public class ScheduleChart<R extends Resource, TaskType extends Task> implements
 
         public boolean onlyResource() {
             return resource != null && task == null;
+        }
+    }
+
+    private class InteractionInvoker extends MouseAdapter {
+
+
+        @Override
+        public void mouseMoved(MouseEvent e) {
+            ResourceAndTask<R, TaskType> resourceAndTask = getResourceAndTask(e.getX(), e.getY());
+            if (resourceAndTask.hasBoth()) {
+                mouseInteractions.mouseOverTask(resourceAndTask.task, e);
+            } else if (resourceAndTask.onlyResource()) {
+                mouseInteractions.mouseOverRow(resourceAndTask.resource, e);
+            }
+        }
+
+        @Override
+        public void mouseClicked(MouseEvent e) {
+            ResourceAndTask<R, TaskType> resourceAndTask = getResourceAndTask(e.getX(), e.getY());
+            if (resourceAndTask.hasBoth()) {
+                mouseInteractions.mouseClickedOnTask(resourceAndTask.task, e);
+            } else if (resourceAndTask.onlyResource()) {
+                mouseInteractions.mouseClickedOnRow(resourceAndTask.resource, e);
+            }
         }
     }
 }
