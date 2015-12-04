@@ -23,6 +23,7 @@ public class ScheduleView<R extends Resource, TaskType extends Task> implements 
     private ChartPanel<R, TaskType> chartPanel;
     private ResourcePanel<R> resourcePanel;
     private TimeLinePanel timeLinePanel;
+    private boolean dragAndDropEnabled;
 
     MouseInteractions<R, TaskType> mouseInteractions = new MouseInteractions.Default<>();
 
@@ -104,6 +105,10 @@ public class ScheduleView<R extends Resource, TaskType extends Task> implements 
         return scrollPane;
     }
 
+    public void enableDragAndDrop(boolean enable) {
+        this.dragAndDropEnabled = enable;
+    }
+
     public <I extends MouseInteractions<R, TaskType>> void setMouseInteractions(I mouseInteractions) {
         this.mouseInteractions = mouseInteractions;
     }
@@ -177,12 +182,17 @@ public class ScheduleView<R extends Resource, TaskType extends Task> implements 
 
         @Override
         public void mousePressed(MouseEvent e) {
+            if (!dragAndDropEnabled) return;
+
             dragSource = getResourceAndTask(e.getX(), e.getY());
+            if (dragSource.hasBoth()) chartPanel.showGhost(dragSource.task, e.getY() - configuration.rowHeight / 2);
         }
 
         @Override
         public void mouseDragged(MouseEvent e) {
+            if (!dragAndDropEnabled) return;
             if (!dragSource.hasBoth()) return;
+            chartPanel.showGhost(dragSource.task, e.getY() - configuration.rowHeight / 2);
             ResourceAndTask<R, TaskType> intermediateTarget = getResourceAndTask(e.getX(), e.getY());
             if (intermediateTarget.resource != null) {
                 mouseInteractions.taskDraggedOverRow(dragSource.task, intermediateTarget.resource, e);
@@ -191,7 +201,9 @@ public class ScheduleView<R extends Resource, TaskType extends Task> implements 
 
         @Override
         public void mouseReleased(MouseEvent e) {
+            if (!dragAndDropEnabled) return;
             if (!dragSource.hasBoth()) return;
+            chartPanel.removeGhost();
             ResourceAndTask<R, TaskType> target = getResourceAndTask(e.getX(), e.getY());
             if (target.resource != null) {
                 mouseInteractions.taskDroppedOnRow(dragSource.task, target.resource, e);

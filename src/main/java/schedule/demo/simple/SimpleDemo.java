@@ -28,13 +28,13 @@ public class SimpleDemo {
         ScheduleView<BasicResource, BasicTask> chart = new ScheduleView<>(scheduleModel);
         chart.setRowHeight(14);
         chart.setTaskRenderer(new RaisedColored(Color.green));
-        //noinspection unchecked
         chart.setMouseInteractions(
                 Aggregate.of(
                         InstantTooltips.renderWith(new RaisedColored(Color.magenta)),
                         ReassignWithDragAndDrop.withHandler(scheduleModel)
                 )
         );
+        chart.enableDragAndDrop(true);
 
 
         chart.getComponent().setPreferredSize(new Dimension(1000, 500));
