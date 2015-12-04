@@ -8,13 +8,13 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 
-public class Tooltips<R extends Resource, TaskType extends Task> extends MouseInteractions.Default<R, TaskType> {
+public class InstantTooltips<R extends Resource, TaskType extends Task> extends MouseInteractions.Default<R, TaskType> {
     final TaskRenderer<TaskType> renderer;
 
     private TaskType currentlyShowing;
     private Popup currentPopup;
 
-    public Tooltips(TaskRenderer<TaskType> renderer) {
+    InstantTooltips(TaskRenderer<TaskType> renderer) {
         this.renderer = renderer;
     }
 
@@ -49,7 +49,7 @@ public class Tooltips<R extends Resource, TaskType extends Task> extends MouseIn
         currentlyShowing = null;
     }
 
-    public static <R extends Resource, TaskType extends Task> Tooltips<R, TaskType> renderWith(TaskRenderer<TaskType> renderer) {
-        return new Tooltips<>(renderer);
+    public static <R extends Resource, TaskType extends Task> InstantTooltips<R, TaskType> renderWith(TaskRenderer<TaskType> renderer) {
+        return new InstantTooltips<>(renderer);
     }
 }

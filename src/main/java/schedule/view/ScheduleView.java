@@ -1,7 +1,6 @@
 package schedule.view;
 
 import schedule.interaction.MouseInteractions;
-import schedule.interaction.Tooltips;
 import schedule.model.Resource;
 import schedule.model.ScheduleModel;
 import schedule.model.Task;
@@ -25,7 +24,7 @@ public class ScheduleView<R extends Resource, TaskType extends Task> implements 
     private ResourcePanel<R> resourcePanel;
     private TimeLinePanel timeLinePanel;
 
-    MouseInteractions<R, TaskType> mouseInteractions = new Tooltips<>(new TaskRenderer.Default<>());
+    MouseInteractions<R, TaskType> mouseInteractions = new MouseInteractions.Default<>();
 
     public ScheduleView(ScheduleModel<R, TaskType> scheduleModel) {
         model = scheduleModel;
@@ -69,7 +68,7 @@ public class ScheduleView<R extends Resource, TaskType extends Task> implements 
     ResourceAndTask<R, TaskType> getResourceAndTask(int x, int y) {
         ResourceAndTask<R, TaskType> retval = new ResourceAndTask<>(null, null);
         int rowNumber = y / configuration.getRowHeightWithMargins();
-        if (rowNumber < model.getResources().size()) {
+        if (rowNumber >= 0 && rowNumber < model.getResources().size()) {
             retval.resource = model.getResources().get(rowNumber);
             retval.task = chartPanel.getTaskAt(x, y);
         }

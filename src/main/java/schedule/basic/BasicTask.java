@@ -1,4 +1,6 @@
-package schedule.model;
+package schedule.basic;
+
+import schedule.model.Task;
 
 import java.time.ZonedDateTime;
 

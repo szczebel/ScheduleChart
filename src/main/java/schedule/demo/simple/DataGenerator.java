@@ -1,8 +1,8 @@
 package schedule.demo.simple;
 
-import schedule.model.BasicResource;
-import schedule.model.BasicScheduleModel;
-import schedule.model.BasicTask;
+import schedule.basic.BasicResource;
+import schedule.basic.BasicScheduleModel;
+import schedule.basic.BasicTask;
 
 import java.time.ZonedDateTime;
 import java.util.ArrayList;

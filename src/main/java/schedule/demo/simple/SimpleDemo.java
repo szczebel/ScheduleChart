@@ -1,9 +1,10 @@
 package schedule.demo.simple;
 
-import schedule.interaction.Tooltips;
-import schedule.model.BasicResource;
-import schedule.model.BasicScheduleModel;
-import schedule.model.BasicTask;
+import schedule.basic.BasicResource;
+import schedule.basic.BasicScheduleModel;
+import schedule.basic.BasicTask;
+import schedule.interaction.InstantTooltips;
+import schedule.interaction.ReassignWithDragAndDrop;
 import schedule.view.ScheduleView;
 import schedule.view.TaskRenderer;
 
@@ -30,7 +31,8 @@ public class SimpleDemo {
         //noinspection unchecked
         chart.setMouseInteractions(
                 Aggregate.of(
-                        Tooltips.renderWith(new RaisedColored(Color.magenta))
+                        InstantTooltips.renderWith(new RaisedColored(Color.magenta)),
+                        ReassignWithDragAndDrop.withHandler(scheduleModel)
                 )
         );
 

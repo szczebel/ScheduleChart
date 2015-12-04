@@ -4,10 +4,10 @@ import java.time.ZonedDateTime;
 import java.util.Collection;
 import java.util.List;
 
-public interface ScheduleModel<R extends Resource, E extends Task> {
+public interface ScheduleModel<R extends Resource, TaskType extends Task> {
     List<R> getResources();
 
-    Collection<E> getEventsAssignedTo(R resource);
+    Collection<TaskType> getEventsAssignedTo(R resource);
 
     void setListener(Listener listener);
 

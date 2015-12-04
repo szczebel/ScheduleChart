@@ -1,4 +1,6 @@
-package schedule.model;
+package schedule.basic;
+
+import schedule.model.Resource;
 
 public class BasicResource implements Resource {
     final String name;
