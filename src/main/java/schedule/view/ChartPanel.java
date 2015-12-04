@@ -5,15 +5,14 @@ import schedule.model.ScheduleModel;
 import schedule.model.Task;
 
 import java.awt.*;
-import java.util.HashMap;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 
 class ChartPanel<R extends Resource, TaskType extends Task> extends PanelWithRows {
     private final ScheduleModel<R, TaskType> model;
     TaskRenderer<TaskType> taskRenderer = new TaskRenderer.Default<>();
     private DraggedTask ghost = new DraggedTask();
+    private Set<TaskType> selection = new HashSet<>();
 
     final Map<Rectangle, TaskType> hitMap = new HashMap<>();
 
@@ -52,8 +51,20 @@ class ChartPanel<R extends Resource, TaskType extends Task> extends PanelWithRow
     private void renderTask(Graphics g, TaskType task, int y) {
         Rectangle bounds = getBounds(task, y);
         if (ghost.task == task) PLACEHOLDER_RENDERING.render(g, task, bounds);
-        else NORMAL_RENDERING.render(g, task, bounds);
+        else {
+            NORMAL_RENDERING.render(g, task, bounds);
+            renderSelectionDecoration(g, task, bounds);
+        }
         hitMap.put(bounds, task);
+    }
+
+    private void renderSelectionDecoration(Graphics g, TaskType task, Rectangle bounds) {
+        if (selection.contains(task)) {
+            g.setColor(Color.red);
+            g.drawRect(bounds.x - 1, bounds.y - 1, bounds.width + 1, bounds.height + 1);
+            g.drawRect(bounds.x - 2, bounds.y - 2, bounds.width + 3, bounds.height + 3);
+            g.drawRect(bounds.x - 3, bounds.y - 3, bounds.width + 5, bounds.height + 5);
+        }
     }
 
     private Rectangle getBounds(TaskType task, int y) {
@@ -81,6 +92,25 @@ class ChartPanel<R extends Resource, TaskType extends Task> extends PanelWithRow
     void showGhost(TaskType task, int y) {
         ghost.show(task, y);
         repaint();
+    }
+
+    void clearSelection() {
+        selection.clear();
+        repaint();
+    }
+
+    void addSelected(TaskType task) {
+        selection.add(task);
+        repaint();
+    }
+
+    void setSelected(TaskType task) {
+        selection.clear();
+        addSelected(task);
+    }
+
+    Collection<TaskType> getSelection() {
+        return Collections.unmodifiableCollection(selection);
     }
 
     class DraggedTask {

@@ -12,6 +12,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import java.time.Duration;
 import java.time.ZonedDateTime;
+import java.util.Collection;
 
 @SuppressWarnings("unused")
 public class ScheduleView<R extends Resource, TaskType extends Task> implements ScheduleModel.Listener {
@@ -138,6 +139,10 @@ public class ScheduleView<R extends Resource, TaskType extends Task> implements 
         getComponent().repaint();
     }
 
+    public Collection<TaskType> getSelection() {
+        return chartPanel.getSelection();
+    }
+
 
     @Override
     public void dataChanged() {
@@ -183,7 +188,6 @@ public class ScheduleView<R extends Resource, TaskType extends Task> implements 
         @Override
         public void mousePressed(MouseEvent e) {
             if (!dragAndDropEnabled) return;
-
             dragSource = getResourceAndTask(e.getX(), e.getY());
             if (dragSource.hasBoth()) chartPanel.showGhost(dragSource.task, e.getY() - configuration.rowHeight / 2);
         }
@@ -224,8 +228,11 @@ public class ScheduleView<R extends Resource, TaskType extends Task> implements 
         public void mouseClicked(MouseEvent e) {
             ResourceAndTask<R, TaskType> resourceAndTask = getResourceAndTask(e.getX(), e.getY());
             if (resourceAndTask.hasBoth()) {
+                if (e.isControlDown()) chartPanel.addSelected(resourceAndTask.task);
+                else chartPanel.setSelected(resourceAndTask.task);
                 mouseInteractions.mouseClickedOnTask(resourceAndTask.task, e);
             } else if (resourceAndTask.onlyResource()) {
+                chartPanel.clearSelection();
                 mouseInteractions.mouseClickedOnRow(resourceAndTask.resource, e);
             }
         }

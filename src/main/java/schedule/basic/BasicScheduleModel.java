@@ -44,7 +44,7 @@ public class BasicScheduleModel<R extends Resource, TaskType extends Task> imple
         listener.dataChanged();
     }
 
-    public void clear() {
+    public void clearAllData() {
         resources.clear();
         assignments.clear();
         reverseAssignments.clear();
