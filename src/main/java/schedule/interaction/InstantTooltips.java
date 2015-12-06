@@ -12,7 +12,7 @@ public class InstantTooltips<R extends Resource, TaskType extends Task> extends 
     final TaskRenderer<TaskType> renderer;
 
     private TaskType currentlyShowing;
-    private Popup currentPopup;
+    private JPopupMenu currentPopup;
 
     InstantTooltips(TaskRenderer<TaskType> renderer) {
         this.renderer = renderer;
@@ -28,9 +28,11 @@ public class InstantTooltips<R extends Resource, TaskType extends Task> extends 
             Dimension dimension = layout.preferredLayoutSize(renderingComponent);
             renderingComponent.setPreferredSize(dimension);
         }
-        if (currentPopup != null) currentPopup.hide();
-        currentPopup = PopupFactory.getSharedInstance().getPopup(e.getComponent(), renderingComponent, e.getXOnScreen() + 16, e.getYOnScreen() - renderingComponent.getPreferredSize().height);
-        currentPopup.show();
+        if (currentPopup != null) currentPopup.setVisible(false);
+        currentPopup = new JPopupMenu();
+        currentPopup.setLayout(new BorderLayout());
+        currentPopup.add(renderingComponent);
+        currentPopup.show(e.getComponent(), e.getX(), e.getY());
     }
 
     @Override
@@ -44,7 +46,7 @@ public class InstantTooltips<R extends Resource, TaskType extends Task> extends 
     }
 
     void reset() {
-        if (currentPopup != null) currentPopup.hide();
+        if (currentPopup != null) currentPopup.setVisible(false);
         currentPopup = null;
         currentlyShowing = null;
     }

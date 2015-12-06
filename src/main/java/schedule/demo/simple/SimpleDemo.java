@@ -3,6 +3,7 @@ package schedule.demo.simple;
 import schedule.basic.BasicResource;
 import schedule.basic.BasicScheduleModel;
 import schedule.basic.BasicTask;
+import schedule.interaction.InstantTooltips;
 import schedule.interaction.MouseInteractions;
 import schedule.interaction.ReassignWithDragAndDrop;
 import schedule.view.ScheduleView;
@@ -32,7 +33,7 @@ public class SimpleDemo {
         chart.setTaskRenderer(new RaisedColored(Color.green));
         chart.setMouseInteractions(
                 Aggregate.of(
-                        //InstantTooltips.renderWith(new RaisedColored(Color.magenta)),
+                        InstantTooltips.renderWith(new RaisedColored(Color.magenta)),
                         ReassignWithDragAndDrop.withHandler(scheduleModel),
                         new MouseInteractions.Default<BasicResource, BasicTask>() {
                             @Override
