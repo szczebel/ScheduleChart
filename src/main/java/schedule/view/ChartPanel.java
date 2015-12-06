@@ -5,6 +5,7 @@ import schedule.model.ScheduleModel;
 import schedule.model.Task;
 
 import java.awt.*;
+import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.List;
 
@@ -25,16 +26,33 @@ class ChartPanel<R extends Resource, TaskType extends Task> extends PanelWithRow
     @Override
     protected void paintComponent(Graphics g) {
         List<R> resources = model.getResources();
-        for (int i = 0; i < resources.size(); i++) {
-            renderRowBackground(g, i);
-        }
+        renderRows(g, resources);
         Util.renderDayLines(g, getHeight(), null, configuration, model.getStart(), model.getEnd());
+        renderTasks(g, resources);
+        renderNowLine(g);
+        renderDragged(g);
+    }
 
+    private void renderNowLine(Graphics g) {
+        ZonedDateTime now = ZonedDateTime.now();
+        if (now.isAfter(model.getStart()) && now.isBefore(model.getEnd())) {
+            int x = configuration.timeToX(now);
+            g.setColor(Color.blue);
+            g.drawLine(x, 0, x, getHeight());
+        }
+    }
+
+    private void renderTasks(Graphics g, List<R> resources) {
         hitMap.clear();
         for (int i = 0; i < resources.size(); i++) {
             renderRowTasks(g, i, resources.get(i));
         }
-        renderDragged(g);
+    }
+
+    private void renderRows(Graphics g, List<R> resources) {
+        for (int i = 0; i < resources.size(); i++) {
+            renderRowBackground(g, i);
+        }
     }
 
     private void renderDragged(Graphics g) {
