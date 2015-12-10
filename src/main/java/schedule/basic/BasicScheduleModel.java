@@ -9,6 +9,8 @@ import schedule.model.Task;
 
 import java.time.ZonedDateTime;
 import java.util.*;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 @SuppressWarnings("unused")
 public class BasicScheduleModel<R extends Resource, TaskType extends Task> implements ScheduleModel<R, TaskType>, ReassignWithDragAndDrop.ReassignHandler<R, TaskType> {
@@ -16,32 +18,55 @@ public class BasicScheduleModel<R extends Resource, TaskType extends Task> imple
     final Multimap<R, TaskType> assignments = HashMultimap.create();
     final Map<TaskType, R> reverseAssignments = new HashMap<>();
     final List<R> resources = new ArrayList<>();
-    Listener listener = () -> {
+    protected Listener listener = (a, b, c) -> {
     };
-    private ZonedDateTime end = ZonedDateTime.now();
     private ZonedDateTime start = ZonedDateTime.now().minusDays(7);
+    private ZonedDateTime end = ZonedDateTime.now().plusDays(7);
+
+    private Predicate<R> resourceFilter = (r) -> true;
+    private Predicate<TaskType> taskFilter = (t) -> true;
+
+    public void setResourceFilter(Predicate<R> resourceFilter) {
+        this.resourceFilter = resourceFilter;
+        listener.dataChanged(true, false, false);
+    }
+
+    public void setTaskFilter(Predicate<TaskType> taskFilter) {
+        this.taskFilter = taskFilter;
+        listener.dataChanged(false, true, false);
+    }
 
     public void addResources(Collection<R> resources) {
         this.resources.addAll(resources);
-        listener.dataChanged();
+        listener.dataChanged(true, false, false);
     }
 
     public void assign(R res, TaskType event) {
-        if (!resources.contains(res)) resources.add(res);
+        boolean resourcesChanged = false;
+        if (!resources.contains(res)) {
+            resources.add(res);
+            resourcesChanged = true;
+        }
         assignments.put(res, event);
         if (reverseAssignments.containsKey(event))
             throw new RuntimeException(event + " already has assignment in this model");
         reverseAssignments.put(event, res);
+        boolean intervalChanged = recalculateInterval();
+        listener.dataChanged(resourcesChanged, true, intervalChanged);
+    }
+
+    protected boolean recalculateInterval() {
+        ZonedDateTime oldStart = start;
+        ZonedDateTime oldEnd = end;
         start = earliestEvent().getStart().minusHours(1);
         end = latestEvent().getEnd().plusHours(1);
-        listener.dataChanged();
+        return (!(oldStart.equals(start) && oldEnd.equals(end)));
     }
 
     public void unassign(TaskType event) {
         removeFromMappings(event);
-        start = earliestEvent().getStart().minusHours(1);
-        end = latestEvent().getEnd().plusHours(1);
-        listener.dataChanged();
+        boolean intervalChanged = recalculateInterval();
+        listener.dataChanged(false, true, intervalChanged);
     }
 
     public void clearAllData() {
@@ -50,7 +75,7 @@ public class BasicScheduleModel<R extends Resource, TaskType extends Task> imple
         reverseAssignments.clear();
         end = ZonedDateTime.now();
         start = ZonedDateTime.now().minusDays(60);
-        listener.dataChanged();
+        listener.dataChanged(true, false, false);
     }
 
     protected TaskType earliestEvent() {
@@ -85,12 +110,12 @@ public class BasicScheduleModel<R extends Resource, TaskType extends Task> imple
 
     @Override
     public List<R> getResources() {
-        return Collections.unmodifiableList(resources);
+        return Collections.unmodifiableList(resources.stream().filter(resourceFilter).collect(Collectors.toList()));
     }
 
     @Override
     public Collection<TaskType> getEventsAssignedTo(R resource) {
-        return Collections.unmodifiableCollection(assignments.get(resource));
+        return Collections.unmodifiableCollection(assignments.get(resource).stream().filter(taskFilter).collect(Collectors.toList()));
     }
 
     @Override

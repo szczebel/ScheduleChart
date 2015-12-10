@@ -16,6 +16,6 @@ public interface ScheduleModel<R extends Resource, TaskType extends Task> {
     ZonedDateTime getStart();
 
     interface Listener {
-        void dataChanged();
+        void dataChanged(boolean resourcesChanged, boolean tasksChanged, boolean intervalChanged);
     }
 }

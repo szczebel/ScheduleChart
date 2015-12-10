@@ -145,8 +145,9 @@ public class ScheduleView<R extends Resource, TaskType extends Task> implements 
 
 
     @Override
-    public void dataChanged() {
-        recalculateSizes();
+    public void dataChanged(boolean resourcesChanged, boolean tasksChanged, boolean intervalChanged) {
+        if (resourcesChanged || intervalChanged) recalculateSizes();
+        else chartPanel.repaint();
     }
 
     public class Configuration {
