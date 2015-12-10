@@ -8,11 +8,12 @@ import schedule.model.Task;
 
 import java.time.ZonedDateTime;
 import java.util.*;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 @SuppressWarnings("unused")
-public class BasicScheduleModel<R extends Resource, TaskType extends Task> implements ScheduleModel<R, TaskType> {
+public class GenericScheduleModel<R extends Resource, TaskType extends Task> implements ScheduleModel<R, TaskType> {
 
     final Multimap<R, TaskType> assignments = HashMultimap.create();
     final Map<TaskType, R> reverseAssignments = new HashMap<>();
@@ -41,17 +42,32 @@ public class BasicScheduleModel<R extends Resource, TaskType extends Task> imple
     }
 
     public void assign(R res, TaskType event) {
+        boolean resourcesChanged = assignInternal(res, event);
+        boolean intervalChanged = recalculateInterval();
+        listener.dataChanged(resourcesChanged, true, intervalChanged);
+    }
+
+    public void assignAll(Collection<TaskType> tasks, Function<TaskType, R> mapper) {
+        boolean resourcesChanged = false;
+        for (TaskType task : tasks) {
+            R res = mapper.apply(task);
+            resourcesChanged |= assignInternal(res, task);
+        }
+        boolean intervalChanged = recalculateInterval();
+        listener.dataChanged(resourcesChanged, true, intervalChanged);
+    }
+
+    protected boolean assignInternal(R res, TaskType event) {
+        if (reverseAssignments.containsKey(event))
+            throw new RuntimeException(event + " already has assignment in this model");
         boolean resourcesChanged = false;
         if (!resources.contains(res)) {
             resources.add(res);
             resourcesChanged = true;
         }
         assignments.put(res, event);
-        if (reverseAssignments.containsKey(event))
-            throw new RuntimeException(event + " already has assignment in this model");
         reverseAssignments.put(event, res);
-        boolean intervalChanged = recalculateInterval();
-        listener.dataChanged(resourcesChanged, true, intervalChanged);
+        return resourcesChanged;
     }
 
     protected boolean recalculateInterval() {

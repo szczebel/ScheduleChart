@@ -1,8 +1,8 @@
 package schedule.demo.simple;
 
 import schedule.basic.BasicResource;
-import schedule.basic.BasicScheduleModel;
 import schedule.basic.BasicTask;
+import schedule.basic.GenericScheduleModel;
 import schedule.interaction.InstantTooltips;
 import schedule.interaction.MenuOnRightClick;
 import schedule.interaction.MouseInteractions;
@@ -37,10 +37,10 @@ public class SimpleDemo {
         frame.setVisible(true);
     }
 
-    private BasicScheduleModel<BasicResource, BasicTask> scheduleModel;
+    private GenericScheduleModel<BasicResource, BasicTask> scheduleModel;
 
     JComponent buildContent() {
-        scheduleModel = new BasicScheduleModel<>();
+        scheduleModel = new GenericScheduleModel<>();
         ZonedDateTime start = ZonedDateTime.now().minusDays(14);
         ZonedDateTime end = ZonedDateTime.now().plusDays(14);
         new DataGenerator().generate(scheduleModel, start, end);

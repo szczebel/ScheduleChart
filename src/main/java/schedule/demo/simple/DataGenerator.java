@@ -1,8 +1,8 @@
 package schedule.demo.simple;
 
 import schedule.basic.BasicResource;
-import schedule.basic.BasicScheduleModel;
 import schedule.basic.BasicTask;
+import schedule.basic.GenericScheduleModel;
 
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -13,14 +13,15 @@ public class DataGenerator {
 
     private final Random random = new Random();
 
-    void generate(BasicScheduleModel<BasicResource, BasicTask> model, ZonedDateTime start, ZonedDateTime end) {
+    void generate(GenericScheduleModel<BasicResource, BasicTask> model, ZonedDateTime start, ZonedDateTime end) {
         List<BasicResource> resources = new ArrayList<>();
         for (int i = 100; i <= 200; ++i) resources.add(new BasicResource("Conference room " + i));
         resources.forEach(resource -> buildLineOfWork(resource, start, end, model));
     }
 
     int counter = 100;
-    private void buildLineOfWork(BasicResource res, ZonedDateTime start, ZonedDateTime end, BasicScheduleModel<BasicResource, BasicTask> model) {
+
+    private void buildLineOfWork(BasicResource res, ZonedDateTime start, ZonedDateTime end, GenericScheduleModel<BasicResource, BasicTask> model) {
         ZonedDateTime currentTime = start;
         while (currentTime.isBefore(end)) {
             ZonedDateTime eventStart = fastForward(currentTime);
