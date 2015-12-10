@@ -11,6 +11,7 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @SuppressWarnings("unused")
 public class GenericScheduleModel<R extends Resource, TaskType extends Task> implements ScheduleModel<R, TaskType> {
@@ -47,14 +48,14 @@ public class GenericScheduleModel<R extends Resource, TaskType extends Task> imp
         listener.dataChanged(resourcesChanged, true, intervalChanged);
     }
 
-    public void assignAll(Collection<TaskType> tasks, Function<TaskType, R> mapper) {
-        boolean resourcesChanged = false;
-        for (TaskType task : tasks) {
+    public void assignAll(Stream<TaskType> tasks, Function<TaskType, R> mapper) {
+        boolean[] resourcesChanged = new boolean[1];
+        tasks.forEach(task -> {
             R res = mapper.apply(task);
-            resourcesChanged |= assignInternal(res, task);
-        }
+            resourcesChanged[0] |= assignInternal(res, task);
+        });
         boolean intervalChanged = recalculateInterval();
-        listener.dataChanged(resourcesChanged, true, intervalChanged);
+        listener.dataChanged(resourcesChanged[0], true, intervalChanged);
     }
 
     protected boolean assignInternal(R res, TaskType event) {
