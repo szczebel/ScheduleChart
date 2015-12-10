@@ -2,7 +2,6 @@ package schedule.basic;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
-import schedule.interaction.ReassignWithDragAndDrop;
 import schedule.model.Resource;
 import schedule.model.ScheduleModel;
 import schedule.model.Task;
@@ -13,7 +12,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 @SuppressWarnings("unused")
-public class BasicScheduleModel<R extends Resource, TaskType extends Task> implements ScheduleModel<R, TaskType>, ReassignWithDragAndDrop.ReassignHandler<R, TaskType> {
+public class BasicScheduleModel<R extends Resource, TaskType extends Task> implements ScheduleModel<R, TaskType> {
 
     final Multimap<R, TaskType> assignments = HashMultimap.create();
     final Map<TaskType, R> reverseAssignments = new HashMap<>();
@@ -123,7 +122,6 @@ public class BasicScheduleModel<R extends Resource, TaskType extends Task> imple
         this.listener = listener;
     }
 
-    @Override
     public void reassign(TaskType task, R newResource) {
         removeFromMappings(task);
         assign(newResource, task);

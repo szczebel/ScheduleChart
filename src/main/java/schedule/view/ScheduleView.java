@@ -1,5 +1,6 @@
 package schedule.view;
 
+import schedule.interaction.EmptyInteractions;
 import schedule.interaction.MouseInteractions;
 import schedule.model.Resource;
 import schedule.model.ScheduleModel;
@@ -26,7 +27,7 @@ public class ScheduleView<R extends Resource, TaskType extends Task> implements 
     private TimeLinePanel timeLinePanel;
     private boolean dragAndDropEnabled;
 
-    MouseInteractions<R, TaskType> mouseInteractions = new MouseInteractions.Default<>();
+    MouseInteractions<R, TaskType> mouseInteractions = new EmptyInteractions<>();
 
     public ScheduleView(ScheduleModel<R, TaskType> scheduleModel) {
         model = scheduleModel;
@@ -200,7 +201,7 @@ public class ScheduleView<R extends Resource, TaskType extends Task> implements 
             chartPanel.showGhost(dragSource.task, e.getY() - configuration.rowHeight / 2);
             ResourceAndTask<R, TaskType> intermediateTarget = getResourceAndTask(e.getX(), e.getY());
             if (intermediateTarget.resource != null) {
-                mouseInteractions.taskDraggedOverRow(dragSource.task, intermediateTarget.resource, e);
+                mouseInteractions.taskDraggedOverRow(dragSource.resource, dragSource.task, intermediateTarget.resource, e);
             }
         }
 
@@ -210,8 +211,8 @@ public class ScheduleView<R extends Resource, TaskType extends Task> implements 
             if (!dragSource.hasBoth()) return;
             chartPanel.removeGhost();
             ResourceAndTask<R, TaskType> target = getResourceAndTask(e.getX(), e.getY());
-            if (target.resource != null) {
-                mouseInteractions.taskDroppedOnRow(dragSource.task, target.resource, e);
+            if (target.resource != null && dragSource.resource != target.resource) {
+                mouseInteractions.taskDroppedOnRow(dragSource.resource, dragSource.task, target.resource, e);
             }
         }
 

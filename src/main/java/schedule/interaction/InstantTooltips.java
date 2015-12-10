@@ -8,7 +8,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 
-public class InstantTooltips<R extends Resource, TaskType extends Task> extends MouseInteractions.Default<R, TaskType> {
+public class InstantTooltips<R extends Resource, TaskType extends Task> extends EmptyInteractions<R, TaskType> {
     final TaskRenderer<TaskType> renderer;
 
     private TaskType currentlyShowing;
@@ -41,7 +41,7 @@ public class InstantTooltips<R extends Resource, TaskType extends Task> extends 
     }
 
     @Override
-    public void taskDraggedOverRow(TaskType task, R resource, MouseEvent e) {
+    public void taskDraggedOverRow(R original, TaskType task, R target, MouseEvent e) {
         reset();
     }
 

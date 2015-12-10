@@ -16,37 +16,19 @@ public interface MouseInteractions<R extends Resource, TaskType extends Task> {
 
     void mouseOverEmptySpace(R resource, MouseEvent e);
 
-    void taskDraggedOverRow(TaskType task, R resource, MouseEvent e);
+    void taskDraggedOverRow(R original, TaskType task, R target, MouseEvent e);
 
-    void taskDroppedOnRow(TaskType task, R resource, MouseEvent e);
+    void taskDroppedOnRow(R original, TaskType task, R target, MouseEvent e);
 
-    class Default<R extends Resource, TaskType extends Task> implements MouseInteractions<R, TaskType> {
+    class DragAndDropTrio<R extends Resource, TaskType extends Task> {
+        public final R originalResource;
+        public final TaskType task;
+        public final R targetResource;
 
-        @Override
-        public void mouseOverTask(TaskType task, MouseEvent e) {
-        }
-
-        @Override
-        public void mouseClickedOnTask(TaskType task, MouseEvent e) {
-        }
-
-        @Override
-        public void mouseClickedOnRow(R resource, MouseEvent e) {
-        }
-
-        @Override
-        public void mouseOverEmptySpace(R resource, MouseEvent e) {
-
-        }
-
-        @Override
-        public void taskDraggedOverRow(TaskType task, R resource, MouseEvent e) {
-
-        }
-
-        @Override
-        public void taskDroppedOnRow(TaskType task, R resource, MouseEvent e) {
-
+        public DragAndDropTrio(R originalResource, TaskType task, R targetResource) {
+            this.originalResource = originalResource;
+            this.task = task;
+            this.targetResource = targetResource;
         }
     }
 
@@ -79,13 +61,13 @@ public interface MouseInteractions<R extends Resource, TaskType extends Task> {
         }
 
         @Override
-        public void taskDraggedOverRow(TaskType task, R resource, MouseEvent e) {
-            allInteractions.forEach(i -> i.taskDraggedOverRow(task, resource, e));
+        public void taskDraggedOverRow(R original, TaskType task, R target, MouseEvent e) {
+            allInteractions.forEach(i -> i.taskDraggedOverRow(original, task, target, e));
         }
 
         @Override
-        public void taskDroppedOnRow(TaskType task, R resource, MouseEvent e) {
-            allInteractions.forEach(i -> i.taskDroppedOnRow(task, resource, e));
+        public void taskDroppedOnRow(R original, TaskType task, R target, MouseEvent e) {
+            allInteractions.forEach(i -> i.taskDroppedOnRow(original, task, target, e));
         }
 
         @SafeVarargs

@@ -31,7 +31,7 @@ public class DataGenerator {
     }
 
     private ZonedDateTime fastForward(ZonedDateTime currentTime) {
-        currentTime = currentTime.plusHours(12 + random.nextInt(144)).plusMinutes(random.nextInt(60));
+        currentTime = currentTime.plusHours(6 + random.nextInt(72)).plusMinutes(random.nextInt(60));
         return currentTime;
     }
 }
