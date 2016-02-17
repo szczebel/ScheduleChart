@@ -1,10 +1,7 @@
-package schedule.basic;
+package schedule.model;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
-import schedule.model.Resource;
-import schedule.model.ScheduleModel;
-import schedule.model.Task;
 
 import java.time.ZonedDateTime;
 import java.util.*;
@@ -13,14 +10,11 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-@SuppressWarnings("unused")
-public class GenericScheduleModel<R extends Resource, TaskType extends Task> implements ScheduleModel<R, TaskType> {
+public class GenericScheduleModel<R extends Resource, TaskType extends Task> extends AbstractScheduleModel<R, TaskType> {
 
     final Multimap<R, TaskType> assignments = HashMultimap.create();
     final Map<TaskType, R> reverseAssignments = new HashMap<>();
     final List<R> resources = new ArrayList<>();
-    protected Listener listener = (a, b, c) -> {
-    };
     private ZonedDateTime start = ZonedDateTime.now().minusDays(7);
     private ZonedDateTime end = ZonedDateTime.now().plusDays(7);
 
@@ -29,23 +23,23 @@ public class GenericScheduleModel<R extends Resource, TaskType extends Task> imp
 
     public void setResourceFilter(Predicate<R> resourceFilter) {
         this.resourceFilter = resourceFilter;
-        listener.dataChanged(true, false, false);
+        fireDataChanged(true, false, false);
     }
 
     public void setTaskFilter(Predicate<TaskType> taskFilter) {
         this.taskFilter = taskFilter;
-        listener.dataChanged(false, true, false);
+        fireDataChanged(false, true, false);
     }
 
     public void addResources(Collection<R> resources) {
         this.resources.addAll(resources);
-        listener.dataChanged(true, false, false);
+        fireDataChanged(true, false, false);
     }
 
     public void assign(R res, TaskType event) {
         boolean resourcesChanged = assignInternal(res, event);
         boolean intervalChanged = recalculateInterval();
-        listener.dataChanged(resourcesChanged, true, intervalChanged);
+        fireDataChanged(resourcesChanged, true, intervalChanged);
     }
 
     public void assignAll(Stream<TaskType> tasks, Function<TaskType, R> mapper) {
@@ -55,7 +49,7 @@ public class GenericScheduleModel<R extends Resource, TaskType extends Task> imp
             resourcesChanged[0] |= assignInternal(res, task);
         });
         boolean intervalChanged = recalculateInterval();
-        listener.dataChanged(resourcesChanged[0], true, intervalChanged);
+        fireDataChanged(resourcesChanged[0], true, intervalChanged);
     }
 
     protected boolean assignInternal(R res, TaskType event) {
@@ -82,7 +76,7 @@ public class GenericScheduleModel<R extends Resource, TaskType extends Task> imp
     public void unassign(TaskType event) {
         removeFromMappings(event);
         boolean intervalChanged = recalculateInterval();
-        listener.dataChanged(false, true, intervalChanged);
+        fireDataChanged(false, true, intervalChanged);
     }
 
     public void clearAllData() {
@@ -91,7 +85,7 @@ public class GenericScheduleModel<R extends Resource, TaskType extends Task> imp
         reverseAssignments.clear();
         end = ZonedDateTime.now();
         start = ZonedDateTime.now().minusDays(60);
-        listener.dataChanged(true, false, false);
+        fireDataChanged(true, false, false);
     }
 
     protected TaskType earliestEvent() {
@@ -132,11 +126,6 @@ public class GenericScheduleModel<R extends Resource, TaskType extends Task> imp
     @Override
     public Collection<TaskType> getEventsAssignedTo(R resource) {
         return Collections.unmodifiableCollection(assignments.get(resource).stream().filter(taskFilter).collect(Collectors.toList()));
-    }
-
-    @Override
-    public void setListener(Listener listener) {
-        this.listener = listener;
     }
 
     public void reassign(TaskType task, R newResource) {

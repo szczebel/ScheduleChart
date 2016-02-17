@@ -15,8 +15,7 @@ import java.time.Duration;
 import java.time.ZonedDateTime;
 import java.util.Collection;
 
-@SuppressWarnings("unused")
-public class ScheduleView<R extends Resource, TaskType extends Task> implements ScheduleModel.Listener {
+public class ScheduleView<R extends Resource, TaskType extends Task> {
     private static final int MAX_PIXELS_PER_HOUR = 60;
     final ScheduleModel<R, TaskType> model;
     final Configuration configuration = new Configuration();
@@ -32,7 +31,7 @@ public class ScheduleView<R extends Resource, TaskType extends Task> implements 
     public ScheduleView(ScheduleModel<R, TaskType> scheduleModel) {
         model = scheduleModel;
         buildComponents();
-        model.setListener(this);
+        model.setChangeListener(this::dataChanged);
     }
 
     private void buildComponents() {
@@ -145,8 +144,7 @@ public class ScheduleView<R extends Resource, TaskType extends Task> implements 
     }
 
 
-    @Override
-    public void dataChanged(boolean resourcesChanged, boolean tasksChanged, boolean intervalChanged) {
+    void dataChanged(boolean resourcesChanged, boolean tasksChanged, boolean intervalChanged) {
         if (resourcesChanged || intervalChanged) recalculateSizes();
         else chartPanel.repaint();
     }

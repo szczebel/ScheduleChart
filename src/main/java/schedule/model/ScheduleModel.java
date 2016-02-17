@@ -9,13 +9,13 @@ public interface ScheduleModel<R extends Resource, TaskType extends Task> {
 
     Collection<TaskType> getEventsAssignedTo(R resource);
 
-    void setListener(Listener listener);
+    void setChangeListener(ChangeListener changeListener);
 
     ZonedDateTime getEnd();
 
     ZonedDateTime getStart();
 
-    interface Listener {
+    interface ChangeListener {
         void dataChanged(boolean resourcesChanged, boolean tasksChanged, boolean intervalChanged);
     }
 }
